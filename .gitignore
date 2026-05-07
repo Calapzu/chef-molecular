@@ -1,0 +1,49 @@
+# NetBeans
+nbproject/private/
+nbproject/build-impl.xml
+nbproject/genfiles.properties
+nbproject/project.properties
+nbproject/project.xml
+
+# Carpetas de compilación
+build/
+dist/
+target/
+
+# Archivos de configuración local (credenciales)
+*.properties
+!application-sample.properties
+
+# Base de datos (evitar subir datos reales)
+*.db
+*.sqlite
+*.lck
+
+# Logs
+*.log
+logs/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE específico
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# JARs (se descargan manualmente)
+*.jar
+!web/WEB-INF/lib/.gitkeep
+
+# Archivos generados
+*.war
+*.ear
+
+# Ignorar archivo real de configuración de BD
+conf/database-config.properties
+**/database-config.properties
