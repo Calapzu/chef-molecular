@@ -797,9 +797,24 @@
                 <div class="sec-linea"></div>
             </div>
             <div class="sec-bloque">
-                <div class="seccion-explicativa" style="text-align: center;">
-                    <p>5 preguntas sobre cambios de estado en la cocina. Necesitas al menos 50% para completar.</p>
-                    <a href="${pageContext.request.contextPath}/quiz?escenario=<%= idEscenario %>" class="btn-quiz">Ir al Quiz ➜</a>
+                <div class="quiz-wrap">
+                    <div>
+                        <div class="quiz-titulo" style="font-family:'Playfair Display',serif; font-size:1.1rem;">🧪 Clasifica las moléculas polares y no polares</div>
+                        <p class="quiz-desc" style="font-size:12px; color: var(--texto2-color);">
+                            <% if (completado) { %>
+                            ✅ ¡Ya completaste este escenario! Puedes volver a practicar para mejorar tu puntuación.
+                            <% } else { %>
+                            🧂 Arrastra cada molécula a la categoría correcta (Polar o No polar). Completa la actividad para obtener tus estrellas.
+                            <% }%>
+                        </p>
+                    </div>
+                    <a href="${pageContext.request.contextPath}/actividad?escenario=<%= idEscenario%>" class="btn-quiz">
+                        <% if (completado) { %>
+                        🔁 Practicar de nuevo
+                        <% } else { %>
+                        🎮 Comenzar actividad →
+                        <% }%>
+                    </a>
                 </div>
             </div>
         </div>

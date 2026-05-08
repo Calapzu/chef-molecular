@@ -752,7 +752,7 @@
                 <!-- ══ BOTÓN MODO DÍA / NOCHE ══ -->
                 <button class="btn-tema" id="btnTema" onclick="toggleTema()" title="Cambiar modo de color">
                     <svg viewBox="0 0 24 24" id="iconoTema" width="14" height="14">
-                        <path id="iconoPath" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+                    <path id="iconoPath" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
                     </svg>
                     <span id="textoTema">Día</span>
                 </button>
@@ -870,18 +870,31 @@
             </div>
 
             <!-- SECCIÓN 3 — QUIZ -->
+            <!-- SECCIÓN 3 — ACTIVIDAD INTERACTIVA -->
             <div class="sec-head">
                 <div class="sec-num">3</div>
-                <span class="sec-titulo">📋 Evaluación — Pon a prueba tu técnica de frío</span>
+                <span class="sec-titulo">🧪 Actividad Interactiva — Pon en práctica lo aprendido</span>
                 <div class="sec-linea"></div>
             </div>
             <div class="sec-bloque">
                 <div class="quiz-wrap">
                     <div>
-                        <div class="quiz-titulo">Quiz — La Cocina Fría 🧊</div>
-                        <p class="quiz-desc">5 preguntas · Mínimo 50% para completar · <%= completado ? "✅ Ya dominas esta nevera — puedes repetir para perfeccionar" : "❄️ Disponible cuando domines las fuerzas de London"%></p>
+                        <div class="quiz-titulo">🎮 Actividad de clasificación molecular</div>
+                        <p class="quiz-desc">
+                            <% if (completado) { %>
+                            ✅ ¡Ya completaste este escenario! Puedes volver a practicar para mejorar tu puntuación.
+                            <% } else { %>
+                            🔬 Arrastra cada elemento a la categoría correcta (Polar o No polar). Completa todas las actividades para obtener tus estrellas.
+                            <% }%>
+                        </p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/quiz?escenario=<%= idEscenario%>" class="btn-quiz"><%= completado ? "Repetir quiz 🔁" : "Ir al quiz 🧊"%> →</a>
+                    <a href="${pageContext.request.contextPath}/actividad?escenario=<%= idEscenario%>" class="btn-quiz">
+                        <% if (completado) { %>
+                        🔁 Practicar de nuevo
+                        <% } else { %>
+                        🎮 Comenzar actividad →
+                        <% }%>
+                    </a>
                 </div>
             </div>
         </div>
@@ -943,10 +956,10 @@
                         y: Math.random() * (CH - 80) + 40,
                         vx: (Math.random() - 0.5) * (modo ? 0.7 : 0.9),
                         vy: (Math.random() - 0.5) * (modo ? 0.7 : 0.9),
-                        r: 28 + Math.random() * 8,  // radio base
+                        r: 28 + Math.random() * 8, // radio base
                         fase: Math.random() * Math.PI * 2,
                         polar: modo,
-                        angulo: Math.random() * Math.PI * 2,   // orientación (para agua y para octano)
+                        angulo: Math.random() * Math.PI * 2, // orientación (para agua y para octano)
                         velocidadAngular: (Math.random() - 0.5) * 0.02
                     });
                 }
@@ -1046,7 +1059,7 @@
             function dibujarOctano(m, tiempo) {
                 const cx = m.x, cy = m.y, rad = m.r;
                 // Forma de gota o esfera con textura de hidrocarburo
-                const grad = ctxm.createLinearGradient(cx - rad*0.4, cy - rad*0.4, cx + rad*0.5, cy + rad*0.5);
+                const grad = ctxm.createLinearGradient(cx - rad * 0.4, cy - rad * 0.4, cx + rad * 0.5, cy + rad * 0.5);
                 grad.addColorStop(0, '#C0E0E8');
                 grad.addColorStop(0.5, '#8DBCCF');
                 grad.addColorStop(1, '#4A7C8F');
@@ -1132,7 +1145,8 @@
             }
 
             function dibujarMolsCompleto() {
-                if (!ctxm) return;
+                if (!ctxm)
+                    return;
                 ctxm.clearRect(0, 0, CW, CH);
                 ctxm.fillStyle = '#030A10';
                 ctxm.fillRect(0, 0, CW, CH);
@@ -1216,7 +1230,8 @@
             }
 
             function setModo(polar) {
-                if (modoPolar === polar) return;
+                if (modoPolar === polar)
+                    return;
                 modoPolar = polar;
                 pausarAnim();
                 reiniciarMolsSegunModo();
@@ -1231,7 +1246,8 @@
             }
 
             function animLoop() {
-                if (!corriendoAnim) return;
+                if (!corriendoAnim)
+                    return;
                 moverMols();
                 dibujarMolsCompleto();
                 animId = requestAnimationFrame(animLoop);
@@ -1239,7 +1255,8 @@
 
             function pausarAnim() {
                 corriendoAnim = false;
-                if (animId) cancelAnimationFrame(animId);
+                if (animId)
+                    cancelAnimationFrame(animId);
             }
             function reanudarAnim() {
                 if (!corriendoAnim) {
@@ -1279,16 +1296,20 @@
                     mols.forEach(m => {
                         m.x *= scaleX;
                         m.y *= scaleY;
-                        m.r = Math.min(m.r * ((scaleX+scaleY)/2), 60);
-                        if (m.x - m.r < 0) m.x = m.r;
-                        if (m.x + m.r > CW) m.x = CW - m.r;
-                        if (m.y - m.r < 0) m.y = m.r;
-                        if (m.y + m.r > CH) m.y = CH - m.r;
+                        m.r = Math.min(m.r * ((scaleX + scaleY) / 2), 60);
+                        if (m.x - m.r < 0)
+                            m.x = m.r;
+                        if (m.x + m.r > CW)
+                            m.x = CW - m.r;
+                        if (m.y - m.r < 0)
+                            m.y = m.r;
+                        if (m.y + m.r > CH)
+                            m.y = CH - m.r;
                     });
                     cristalesFondo.forEach(c => {
                         c.x *= scaleX;
                         c.y *= scaleY;
-                        c.sz *= (scaleX+scaleY)/2;
+                        c.sz *= (scaleX + scaleY) / 2;
                     });
                     dibujarMolsCompleto();
                 }
@@ -1326,7 +1347,8 @@
 
             function mostrarResultado() {
                 const [a, b] = seleccionados;
-                if (!a || !b) return;
+                if (!a || !b)
+                    return;
                 const am = a.tipo, bm = b.tipo;
                 resPanel.classList.add('vis');
                 if (am === 'np' && bm === 'np') {
@@ -1414,7 +1436,8 @@
 
             (function () {
                 const guardado = localStorage.getItem(CLAVE);
-                if (guardado === 'dia') aplicarTema(true);
+                if (guardado === 'dia')
+                    aplicarTema(true);
             })();
         </script>
     </body>

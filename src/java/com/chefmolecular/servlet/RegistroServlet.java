@@ -1,5 +1,6 @@
 package com.chefmolecular.servlet;
 
+import com.chefmolecular.dao.ProgresoDAO;
 import com.chefmolecular.logica.AutenticacionLogica;
 import com.chefmolecular.modelo.Estudiante;
 import jakarta.servlet.ServletException;
@@ -17,8 +18,8 @@ public class RegistroServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        String nombre   = req.getParameter("nombre");
-        String correo   = req.getParameter("correo");
+        String nombre = req.getParameter("nombre");
+        String correo = req.getParameter("correo");
         String password = req.getParameter("password");
 
         String error = logica.registrar(nombre, correo, password);
@@ -34,6 +35,11 @@ public class RegistroServlet extends HttpServlet {
             Estudiante estudiante = logica.login(correo, password);
             HttpSession session = req.getSession(true);
             session.setAttribute("estudiante", estudiante);
+
+            // ✅ NUEVO: inicializar progreso del nuevo estudiante
+            ProgresoDAO progresoDAO = new ProgresoDAO();
+            progresoDAO.inicializarProgreso(estudiante.getIdEstudiante());
+
             res.sendRedirect(req.getContextPath() + "/menu");
         } catch (SQLException ex) {
             req.setAttribute("error", "Error al iniciar sesión automáticamente.");

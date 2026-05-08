@@ -694,10 +694,22 @@
             <div class="sec-bloque">
                 <div class="quiz-wrap">
                     <div>
-                        <div class="quiz-titulo" style="font-family:'Playfair Display',serif; font-size:1.1rem;">Quiz — Puentes de hidrógeno</div>
-                        <p class="quiz-desc" style="font-size:12px; color: var(--texto-medio);">5 preguntas · Mínimo 50% para completar · <%= completado ? "✅ Ya dominas esta pastelería — puedes repetir para perfeccionar" : "🥚 Disponible cuando domines los puentes de H" %></p>
+                        <div class="quiz-titulo" style="font-family:'Playfair Display',serif; font-size:1.1rem;">🧪 Clasifica las moléculas polares y no polares</div>
+                        <p class="quiz-desc" style="font-size:12px; color: var(--texto2-color);">
+                            <% if (completado) { %>
+                            ✅ ¡Ya completaste este escenario! Puedes volver a practicar para mejorar tu puntuación.
+                            <% } else { %>
+                            🧂 Arrastra cada molécula a la categoría correcta (Polar o No polar). Completa la actividad para obtener tus estrellas.
+                            <% }%>
+                        </p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/quiz?escenario=<%= idEscenario %>" class="btn-quiz"><%= completado ? "Repetir quiz 🔁" : "Ir al quiz 🧁" %> →</a>
+                    <a href="${pageContext.request.contextPath}/actividad?escenario=<%= idEscenario%>" class="btn-quiz">
+                        <% if (completado) { %>
+                        🔁 Practicar de nuevo
+                        <% } else { %>
+                        🎮 Comenzar actividad →
+                        <% }%>
+                    </a>
                 </div>
             </div>
         </div>
