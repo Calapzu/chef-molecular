@@ -877,44 +877,50 @@
         </div>
 
         <script>
-            // ========== DRAG & DROP (código original sin cambios) ==========
+            // ========== DRAG & DROP CORREGIDO ==========
             let draggingId = null;
 
             function dragMol(e, id) {
                 draggingId = id;
                 e.dataTransfer.setData('text/plain', id);
             }
+
             function allowDropMol(e) {
                 e.preventDefault();
-                const targetZone = e.target.closest('.zona');
-                if (targetZone && !targetZone.hasAttribute('dragover')) {
-                    document.querySelectorAll('.zona').forEach(z => z.removeAttribute('dragover'));
-                    targetZone.setAttribute('dragover', 'true');
-                }
             }
+
+// Fix dragleave: ignorar eventos que vienen de elementos hijos
             document.querySelectorAll('.zona').forEach(zone => {
-                zone.addEventListener('dragleave', () => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.setAttribute('dragover', 'true');
+                });
+                zone.addEventListener('dragleave', (e) => {
+                    // Solo quitar el atributo si salimos de la zona real (no de un hijo)
+                    if (!zone.contains(e.relatedTarget)) {
+                        zone.removeAttribute('dragover');
+                    }
+                });
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
                     zone.removeAttribute('dragover');
+                    const dragId = e.dataTransfer.getData('text/plain');
+                    const draggedEl = document.getElementById(dragId);
+                    if (!draggedEl)
+                        return;
+                    // Evitar mover el elemento si ya está en esta zona
+                    if (draggedEl.parentElement !== zone) {
+                        zone.appendChild(draggedEl);
+                        draggedEl.classList.remove('correcto', 'incorrecto');
+                        aplicarEfectoCoctelera(draggedEl);
+                    }
+                    actualizarVasos();
                 });
             });
 
-            function dropMol(e, targetTech) {
-                e.preventDefault();
-                const dragId = e.dataTransfer.getData('text/plain');
-                const draggedEl = document.getElementById(dragId);
-                if (!draggedEl)
-                    return;
-                const targetZone = document.getElementById(`zona-${targetTech}`);
-                if (targetZone && draggedEl.parentElement !== targetZone) {
-                    targetZone.appendChild(draggedEl);
-                    draggedEl.classList.remove('correcto', 'incorrecto');
-                    aplicarEfectoCoctelera(draggedEl);
-                }
-                document.querySelectorAll('.zona').forEach(z => z.removeAttribute('dragover'));
-                actualizarVasos();
-            }
-
-            function dropPoolMol(e) {
+// Drop de vuelta al pool
+            document.getElementById('pool-mol').addEventListener('dragover', (e) => e.preventDefault());
+            document.getElementById('pool-mol').addEventListener('drop', (e) => {
                 e.preventDefault();
                 const dragId = e.dataTransfer.getData('text/plain');
                 const draggedEl = document.getElementById(dragId);
@@ -922,53 +928,64 @@
                     document.getElementById('pool-mol').appendChild(draggedEl);
                     draggedEl.classList.remove('correcto', 'incorrecto');
                 }
-                document.querySelectorAll('.zona').forEach(z => z.removeAttribute('dragover'));
                 actualizarVasos();
-            }
+            });
 
             function aplicarEfectoCoctelera(el) {
                 el.style.transform = 'scale(1.1) rotate(2deg)';
-                setTimeout(() => el.style.transform = '', 150);
+                setTimeout(() => el.style.transform = '', 200);
+
+                // Posición correcta usando getBoundingClientRect + scroll
+                const rect = el.getBoundingClientRect();
                 const span = document.createElement('span');
                 span.textContent = '🥤✨';
-                span.style.position = 'absolute';
-                span.style.left = (el.offsetLeft + el.offsetWidth / 2) + 'px';
-                span.style.top = (el.offsetTop - 15) + 'px';
-                span.style.fontSize = '1.5rem';
-                span.style.pointerEvents = 'none';
-                span.style.opacity = '1';
-                span.style.transition = 'all 0.3s';
-                span.style.zIndex = '200';
+                span.style.cssText = `
+        position: fixed;
+        left: ${rect.left + rect.width / 2}px;
+        top: ${rect.top - 20}px;
+        font-size: 1.5rem;
+        pointer-events: none;
+        opacity: 1;
+        transition: opacity 0.4s, transform 0.4s;
+        z-index: 9999;
+    `;
                 document.body.appendChild(span);
-                setTimeout(() => span.style.opacity = '0', 300);
-                setTimeout(() => span.remove(), 350);
+                requestAnimationFrame(() => {
+                    span.style.opacity = '0';
+                    span.style.transform = 'translateY(-20px)';
+                });
+                setTimeout(() => span.remove(), 450);
             }
 
+// ========== ACTUALIZAR VASOS (lógica corregida) ==========
             function actualizarVasos() {
-                const zonas = ['zona-esferificacion', 'zona-emulsion', 'zona-gelificacion'];
-                zonas.forEach(zonaId => {
+                const mapaZonas = {
+                    'zona-esferificacion': 'esferificacion',
+                    'zona-emulsion': 'emulsion',
+                    'zona-gelificacion': 'gelificacion'
+                };
+
+                // Cuántos ingredientes correctos existen por técnica (total esperado)
+                const totalPorTech = {};
+                document.querySelectorAll('.ingrediente').forEach(ing => {
+                    const t = ing.dataset.tech;
+                    totalPorTech[t] = (totalPorTech[t] || 0) + 1;
+                });
+
+                Object.entries(mapaZonas).forEach(([zonaId, techZona]) => {
                     const zona = document.getElementById(zonaId);
                     const ingredientesEnZona = zona.querySelectorAll('.ingrediente');
-                    let esperados = 0;
-                    let correctos = 0;
+
+                    let correctosEnZona = 0;
                     ingredientesEnZona.forEach(ing => {
-                        const techEsperada = ing.dataset.tech;
-                        let esCorrecto = false;
-                        if (zonaId === 'zona-esferificacion' && techEsperada === 'esferificacion')
-                            esCorrecto = true;
-                        if (zonaId === 'zona-emulsion' && techEsperada === 'emulsion')
-                            esCorrecto = true;
-                        if (zonaId === 'zona-gelificacion' && techEsperada === 'gelificacion')
-                            esCorrecto = true;
-                        if (esCorrecto)
-                            correctos++;
-                        if ((zonaId === 'zona-esferificacion' && techEsperada === 'esferificacion') ||
-                                (zonaId === 'zona-emulsion' && techEsperada === 'emulsion') ||
-                                (zonaId === 'zona-gelificacion' && techEsperada === 'gelificacion')) {
-                            esperados++;
-                        }
+                        if (ing.dataset.tech === techZona)
+                            correctosEnZona++;
                     });
-                    const porcentaje = esperados === 0 ? 0 : (correctos / esperados) * 100;
+
+                    // El vaso sube según cuántos correctos haya vs el total esperado para esa técnica
+                    const esperados = totalPorTech[techZona] || 1;
+                    const porcentaje = Math.min((correctosEnZona / esperados) * 100, 100);
+
                     const liquidId = zonaId.replace('zona-', 'liquid-');
                     const liquidDiv = document.getElementById(liquidId);
                     if (liquidDiv)
@@ -976,28 +993,31 @@
                 });
             }
 
+// ========== VERIFICAR (corregido: también marca los del pool como error) ==========
             function verificarClasificacion() {
                 const ingredientes = document.querySelectorAll('.ingrediente');
                 let correctos = 0;
                 const total = ingredientes.length;
+
                 ingredientes.forEach(ing => {
                     const techEsperada = ing.dataset.tech;
                     const zonaActual = ing.parentElement.id;
-                    let esCorrecto = false;
-                    if (techEsperada === 'esferificacion' && zonaActual === 'zona-esferificacion')
-                        esCorrecto = true;
-                    if (techEsperada === 'emulsion' && zonaActual === 'zona-emulsion')
-                        esCorrecto = true;
-                    if (techEsperada === 'gelificacion' && zonaActual === 'zona-gelificacion')
-                        esCorrecto = true;
+                    const esCorrecto = (`zona-${techEsperada}` === zonaActual);
+                    const enPool = (zonaActual === 'pool-mol');
+
                     ing.classList.toggle('correcto', esCorrecto);
-                    ing.classList.toggle('incorrecto', !esCorrecto && zonaActual !== 'pool-mol');
+                    // Si está en el pool, también se marca incorrecto (no clasificado)
+                    ing.classList.toggle('incorrecto', !esCorrecto);
+
                     if (esCorrecto)
                         correctos++;
                 });
+
                 actualizarVasos();
+
                 const feedbackDiv = document.getElementById('feedback-mol');
                 feedbackDiv.style.display = 'block';
+
                 if (correctos === total) {
                     feedbackDiv.innerHTML = '<span style="color:#4ADE80;">✅ ¡Perfecto! Has armado el bar molecular correctamente. Todos los ingredientes en su técnica adecuada. 🍹✨</span>';
                 } else {
@@ -1005,10 +1025,10 @@
                 }
             }
 
+// ========== REINICIAR ==========
             function reiniciarClasificacion() {
                 const pool = document.getElementById('pool-mol');
-                const allIngredientes = document.querySelectorAll('.ingrediente');
-                allIngredientes.forEach(ing => {
+                document.querySelectorAll('.ingrediente').forEach(ing => {
                     ing.classList.remove('correcto', 'incorrecto');
                     pool.appendChild(ing);
                 });
@@ -1016,7 +1036,7 @@
                 document.querySelectorAll('.liquid').forEach(l => l.style.height = '0%');
             }
 
-            // ========== ANIMACIONES DE CANVAS (originales) ==========
+// ========== ANIMACIONES DE CANVAS (sin cambios) ==========
             const canvasEsf = document.getElementById('canvasEsfera');
             const ctxEsf = canvasEsf.getContext('2d');
             function animEsferificacion() {
