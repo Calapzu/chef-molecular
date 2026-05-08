@@ -217,25 +217,32 @@ public class ActividadDAO {
     // VERIFICAR SI EL ESTUDIANTE COMPLETÓ TODAS LAS ACTIVIDADES DEL ESCENARIO
     // =============================================
     public boolean todasActividadesCompletadas(int idEstudiante, int idEscenario) throws SQLException {
-        String sql = "SELECT COUNT(*) as total, "
-                + "SUM(CASE WHEN ra.completado = 1 THEN 1 ELSE 0 END) as completadas "
-                + "FROM actividad_interactiva ai "
-                + "LEFT JOIN resultado_actividad ra ON ai.id_actividad = ra.id_actividad AND ra.id_estudiante = ? "
-                + "WHERE ai.id_escenario = ?";
-
-        try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setInt(1, idEstudiante);
-            ps.setInt(2, idEscenario);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    int total = rs.getInt("total");
-                    int completadas = rs.getInt("completadas");
-                    return total > 0 && total == completadas;
-                }
+    String sql = "SELECT COUNT(*) as total, "
+            + "SUM(CASE WHEN ra.completado = 1 THEN 1 ELSE 0 END) as completadas "
+            + "FROM actividad_interactiva ai "
+            + "LEFT JOIN ( "
+            + "    SELECT id_actividad, id_estudiante, completado "
+            + "    FROM resultado_actividad ra2 "
+            + "    WHERE id_estudiante = ? "
+            + "    AND id_resultado = ( "
+            + "        SELECT MAX(id_resultado) FROM resultado_actividad "
+            + "        WHERE id_actividad = ra2.id_actividad AND id_estudiante = ra2.id_estudiante "
+            + "    ) "
+            + ") ra ON ai.id_actividad = ra.id_actividad "
+            + "WHERE ai.id_escenario = ?";
+    try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
+        ps.setInt(1, idEstudiante);
+        ps.setInt(2, idEscenario);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                int total = rs.getInt("total");
+                int completadas = rs.getInt("completadas");
+                return total > 0 && total == completadas;
             }
         }
-        return false;
     }
+    return false;
+}
 
     // =============================================
     // MAPEAR RESULTADO

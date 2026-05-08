@@ -110,6 +110,17 @@ public class ActividadServlet extends HttpServlet {
         int idEscenario = Integer.parseInt(request.getParameter("idEscenario"));
         int idActividad = Integer.parseInt(request.getParameter("idActividad"));
         int actividadIdx = Integer.parseInt(request.getParameter("actividadIdx"));
+        System.out.println("=== actividadIdx recibido: " + actividadIdx);
+        try {
+            System.out.println("=== totalActividades del escenario: " + actividadLogica.obtenerActividadesDelEscenario(idEscenario).size());
+        } catch (SQLException ex) {
+            System.getLogger(ActividadServlet.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        try {
+            System.out.println("=== todasCompletadas: " + actividadLogica.isEscenarioCompletado(estudiante.getIdEstudiante(), idEscenario));
+        } catch (SQLException ex) {
+            System.getLogger(ActividadServlet.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
         String respuestasJson = request.getParameter("respuestas");
 
         System.out.println("=== Respuestas recibidas: " + respuestasJson);
