@@ -492,6 +492,18 @@
 
         <!-- ══ SCRIPT MODO DÍA / NOCHE ══ -->
         <script>
+            // ── MEDICION JSP ──
+            window.addEventListener('load', function () {
+                const nav = performance.getEntriesByType('navigation')[0];
+                if (nav) {
+                    console.log('\n========== MEDICION JSP: Ranking ==========');
+                    console.log('[JSP] Tiempo hasta primer byte: ' + Math.round(nav.responseStart - nav.requestStart) + ' ms');
+                    console.log('[JSP] Tiempo respuesta servidor: ' + Math.round(nav.responseEnd - nav.requestStart) + ' ms');
+                    console.log('[JSP] Tiempo renderizado página: ' + Math.round(nav.loadEventEnd - nav.responseEnd) + ' ms');
+                    console.log('[JSP] Tiempo TOTAL (clic→página lista): ' + Math.round(nav.loadEventEnd - nav.startTime) + ' ms');
+                    console.log('=============================================\n');
+                }
+            });
             const CLAVE = 'chefMolecularTema';
             const btnT = document.getElementById('btnTema');
             const icoP = document.getElementById('iconoPath');

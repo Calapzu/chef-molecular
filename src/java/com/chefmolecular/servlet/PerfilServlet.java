@@ -24,13 +24,28 @@ public class PerfilServlet extends HttpServlet {
         HttpSession session   = req.getSession(false);
         Estudiante estudiante = (Estudiante) session.getAttribute("estudiante");
 
+        long inicioTotal = System.currentTimeMillis();
+        System.out.println("\n========== MEDICION: Cargar Perfil ==========");
+
         try {
-            req.setAttribute("insignias",
-                insigniaDAO.listarTodasConEstado(estudiante.getIdEstudiante()));
-            req.setAttribute("recetasDesbloqueadas",
-                recetaDAO.obtenerDesbloqueadas(estudiante.getIdEstudiante()));
-            req.setAttribute("progresos",
-                progresoDAO.listarPorEstudiante(estudiante.getIdEstudiante()));
+            // DAO → BD: insignias
+            long t1 = System.currentTimeMillis();
+            req.setAttribute("insignias", insigniaDAO.listarTodasConEstado(estudiante.getIdEstudiante()));
+            System.out.println("[DAO→BD] listarInsignias: " + (System.currentTimeMillis() - t1) + " ms");
+
+            // DAO → BD: recetas desbloqueadas
+            long t2 = System.currentTimeMillis();
+            req.setAttribute("recetasDesbloqueadas", recetaDAO.obtenerDesbloqueadas(estudiante.getIdEstudiante()));
+            System.out.println("[DAO→BD] obtenerRecetasDesbloqueadas: " + (System.currentTimeMillis() - t2) + " ms");
+
+            // DAO → BD: progresos
+            long t3 = System.currentTimeMillis();
+            req.setAttribute("progresos", progresoDAO.listarPorEstudiante(estudiante.getIdEstudiante()));
+            System.out.println("[DAO→BD] listarProgresos: " + (System.currentTimeMillis() - t3) + " ms");
+
+            System.out.println("[TOTAL] Cargar Perfil: " + (System.currentTimeMillis() - inicioTotal) + " ms");
+            System.out.println("=============================================\n");
+
         } catch (SQLException e) {
             req.setAttribute("error", "Error al cargar el perfil.");
         }

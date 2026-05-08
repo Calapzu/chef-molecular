@@ -15,57 +15,74 @@ public class EscenarioLogica {
     private final RecetaDAO recetaDAO = new RecetaDAO();
 
     public boolean estaDesbloqueado(int idEstudiante, int idEscenario) throws SQLException {
+        long inicio = System.currentTimeMillis();
+        System.out.println("\n--- [EscenarioLogica] estaDesbloqueado ---");
+
+        long t1 = System.currentTimeMillis();
         ProgresoEscenario p = progresoDAO.buscar(idEstudiante, idEscenario);
-        return p != null && p.isDesbloqueado();
+        System.out.println("[DAO→BD] buscarProgreso: " + (System.currentTimeMillis() - t1) + " ms");
+
+        boolean resultado = p != null && p.isDesbloqueado();
+        System.out.println("[Logica] evaluarDesbloqueo: " + (System.currentTimeMillis() - inicio) + " ms");
+        System.out.println("------------------------------------------\n");
+
+        return resultado;
     }
 
     public List<Pregunta> obtenerPreguntas(int idEscenario) throws SQLException {
-        return preguntaDAO.listarPorEscenario(idEscenario);
+        long inicio = System.currentTimeMillis();
+        System.out.println("\n--- [EscenarioLogica] obtenerPreguntas ---");
+
+        long t1 = System.currentTimeMillis();
+        List<Pregunta> preguntas = preguntaDAO.listarPorEscenario(idEscenario);
+        System.out.println("[DAO→BD] listarPreguntasPorEscenario: " + (System.currentTimeMillis() - t1) + " ms");
+
+        System.out.println("[TOTAL] obtenerPreguntas: " + (System.currentTimeMillis() - inicio) + " ms");
+        System.out.println("------------------------------------------\n");
+
+        return preguntas;
     }
 
     public int calcularPuntaje(int correctas, int total) {
-        if (total == 0) {
-            return 0;
-        }
+        if (total == 0) return 0;
         return (correctas * 100) / total;
     }
 
     public int calcularEstrellas(int puntaje, int idEscenario, int correctas) {
-        // Escenario 4 usa escala fija por aciertos
         if (idEscenario == 4) {
-            if (correctas >= 5) {
-                return 3;
-            }
-            if (correctas >= 4) {
-                return 2;
-            }
-            if (correctas >= 3) {
-                return 1;
-            }
+            if (correctas >= 5) return 3;
+            if (correctas >= 4) return 2;
+            if (correctas >= 3) return 1;
             return 0;
         }
-        // Demás escenarios: por porcentaje
-        if (puntaje >= 90) {
-            return 3;
-        }
-        if (puntaje >= 70) {
-            return 2;
-        }
-        if (puntaje >= 50) {
-            return 1;
-        }
+        if (puntaje >= 90) return 3;
+        if (puntaje >= 70) return 2;
+        if (puntaje >= 50) return 1;
         return 0;
     }
 
     public void guardarResultado(int idEstudiante, int idEscenario,
             int correctas, int totalPreguntas) throws SQLException {
+        long inicio = System.currentTimeMillis();
+        System.out.println("\n--- [EscenarioLogica] guardarResultado ---");
+
+        long t1 = System.currentTimeMillis();
         int puntaje = calcularPuntaje(correctas, totalPreguntas);
         int estrellas = calcularEstrellas(puntaje, idEscenario, correctas);
         boolean completado = estrellas >= 1;
+        System.out.println("[Logica] calcularPuntajeYEstrellas: " + (System.currentTimeMillis() - t1) + " ms");
 
+        long t2 = System.currentTimeMillis();
         progresoDAO.actualizarProgreso(idEstudiante, idEscenario, estrellas, completado);
+        System.out.println("[DAO→BD] actualizarProgreso: " + (System.currentTimeMillis() - t2) + " ms");
+
         if (completado) {
+            long t3 = System.currentTimeMillis();
             progresoDAO.desbloquearSiguiente(idEstudiante, idEscenario);
+            System.out.println("[DAO→BD] desbloquearSiguiente: " + (System.currentTimeMillis() - t3) + " ms");
         }
+
+        System.out.println("[TOTAL] guardarResultado: " + (System.currentTimeMillis() - inicio) + " ms");
+        System.out.println("------------------------------------------\n");
     }
 }

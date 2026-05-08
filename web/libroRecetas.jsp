@@ -303,9 +303,18 @@
             }
 
             @keyframes vapor {
-                0%   { transform: translateY(0) scale(1); opacity: 0.2; }
-                50%  { transform: translateY(-15px) scale(1.2); opacity: 0.5; }
-                100% { transform: translateY(0) scale(1); opacity: 0.2; }
+                0%   {
+                    transform: translateY(0) scale(1);
+                    opacity: 0.2;
+                }
+                50%  {
+                    transform: translateY(-15px) scale(1.2);
+                    opacity: 0.5;
+                }
+                100% {
+                    transform: translateY(0) scale(1);
+                    opacity: 0.2;
+                }
             }
 
             .menu-portada::before {
@@ -543,8 +552,14 @@
             }
 
             @keyframes llamaFlicker {
-                0%   { opacity: 0; transform: translateX(-4px); }
-                100% { opacity: 0.7; transform: translateX(0); }
+                0%   {
+                    opacity: 0;
+                    transform: translateX(-4px);
+                }
+                100% {
+                    opacity: 0.7;
+                    transform: translateX(0);
+                }
             }
 
             .receta-item-cabecera {
@@ -602,8 +617,12 @@
                 clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
             }
 
-            .estrella-item.on  { background: #D4A438; }
-            .estrella-item.off { background: var(--estrella-off); }
+            .estrella-item.on  {
+                background: #D4A438;
+            }
+            .estrella-item.off {
+                background: var(--estrella-off);
+            }
 
             .item-subtitulo {
                 font-size: 11px;
@@ -640,11 +659,19 @@
             }
 
             @keyframes fadeSlide {
-                from { opacity: 0; transform: translateY(-4px); }
-                to   { opacity: 1; transform: translateY(0); }
+                from {
+                    opacity: 0;
+                    transform: translateY(-4px);
+                }
+                to   {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
-            .detalle-col { margin-bottom: 12px; }
+            .detalle-col {
+                margin-bottom: 12px;
+            }
 
             .detalle-etiqueta {
                 font-size: 9px;
@@ -683,7 +710,9 @@
                 transition: color 0.2s;
             }
 
-            .item-toggle-btn:hover { color: #C87A2C; }
+            .item-toggle-btn:hover {
+                color: #C87A2C;
+            }
 
             .toggle-chevron {
                 width: 8px;
@@ -695,7 +724,9 @@
                 flex-shrink: 0;
             }
 
-            .toggle-chevron.abierto { transform: rotate(-135deg); }
+            .toggle-chevron.abierto {
+                transform: rotate(-135deg);
+            }
 
             /* ═══ BLOQUEADAS ═══ */
             .receta-item.bloqueada {
@@ -703,10 +734,16 @@
                 opacity: 0.6;
             }
 
-            .receta-item.bloqueada:hover { background: none; }
+            .receta-item.bloqueada:hover {
+                background: none;
+            }
 
-            .receta-item.bloqueada .item-nombre { color: var(--bloq-nombre); }
-            .receta-item.bloqueada .item-numero { color: var(--bloq-numero); }
+            .receta-item.bloqueada .item-nombre {
+                color: var(--bloq-nombre);
+            }
+            .receta-item.bloqueada .item-numero {
+                color: var(--bloq-numero);
+            }
 
             .candado-inline {
                 display: inline-flex;
@@ -827,7 +864,7 @@
                 <!-- ══ BOTÓN MODO DÍA / NOCHE (integrado en navbar) ══ -->
                 <button class="btn-tema" id="btnModo" title="Cambiar entre modo noche y día">
                     <svg viewBox="0 0 24 24" id="iconoTema" width="14" height="14">
-                        <path id="iconoPath" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+                    <path id="iconoPath" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
                     </svg>
                     <span id="textoModo">Día</span>
                 </button>
@@ -885,8 +922,8 @@
                 <p class="vacio-menu">🧂 Completa tu primer escenario para revelar tu primera receta.</p>
                 <% } else { %>
                 <% int idx = 0;
-          for (Receta r : desbloqueadas) {
-              idx++;%>
+                    for (Receta r : desbloqueadas) {
+                        idx++;%>
                 <div class="receta-item" onclick="toggleItem(this)">
                     <div class="receta-item-cabecera">
                         <span class="item-numero">0<%= idx%></span>
@@ -930,8 +967,8 @@
                 </div>
 
                 <% int bidx = totalDesb;
-        for (Receta r : bloqueadas) {
-            bidx++;%>
+                    for (Receta r : bloqueadas) {
+                        bidx++;%>
                 <div class="receta-item bloqueada">
                     <div class="receta-item-cabecera">
                         <span class="item-numero">0<%= bidx%></span>
@@ -978,6 +1015,18 @@
         </div>
 
         <script>
+            // ── MEDICION JSP ──
+            window.addEventListener('load', function () {
+                const nav = performance.getEntriesByType('navigation')[0];
+                if (nav) {
+                    console.log('\n========== MEDICION JSP: Libro de Recetas ==========');
+                    console.log('[JSP] Tiempo hasta primer byte: ' + Math.round(nav.responseStart - nav.requestStart) + ' ms');
+                    console.log('[JSP] Tiempo respuesta servidor: ' + Math.round(nav.responseEnd - nav.requestStart) + ' ms');
+                    console.log('[JSP] Tiempo renderizado página: ' + Math.round(nav.loadEventEnd - nav.responseEnd) + ' ms');
+                    console.log('[JSP] Tiempo TOTAL (clic→página lista): ' + Math.round(nav.loadEventEnd - nav.startTime) + ' ms');
+                    console.log('=============================================\n');
+                }
+            });
             // ══ TOGGLE MODO NOCHE/DÍA ══
             const CLAVE = 'chefModo';
             const btn = document.getElementById('btnModo');
@@ -1020,20 +1069,24 @@
                     event.stopPropagation();
                 }
 
-                if (item.classList.contains('bloqueada')) return;
+                if (item.classList.contains('bloqueada'))
+                    return;
 
                 const detalle = item.querySelector('.item-detalle');
                 const chevron = item.querySelector('.toggle-chevron');
                 const txtSpan = item.querySelector('.toggle-txt');
-                if (!detalle) return;
+                if (!detalle)
+                    return;
 
                 const abierto = detalle.classList.toggle('visible');
-                if (chevron) chevron.classList.toggle('abierto', abierto);
-                if (txtSpan) txtSpan.textContent = abierto ? 'Ocultar preparación' : 'Ver preparación';
+                if (chevron)
+                    chevron.classList.toggle('abierto', abierto);
+                if (txtSpan)
+                    txtSpan.textContent = abierto ? 'Ocultar preparación' : 'Ver preparación';
             }
 
             document.querySelectorAll('.item-toggle-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     const recetaItem = this.closest('.receta-item');
                     if (recetaItem && !recetaItem.classList.contains('bloqueada')) {
@@ -1042,8 +1095,10 @@
                         const txtSpan = this.querySelector('.toggle-txt');
                         if (detalle) {
                             const abierto = detalle.classList.toggle('visible');
-                            if (chevron) chevron.classList.toggle('abierto', abierto);
-                            if (txtSpan) txtSpan.textContent = abierto ? 'Ocultar preparación' : 'Ver preparación';
+                            if (chevron)
+                                chevron.classList.toggle('abierto', abierto);
+                            if (txtSpan)
+                                txtSpan.textContent = abierto ? 'Ocultar preparación' : 'Ver preparación';
                         }
                     }
                 });

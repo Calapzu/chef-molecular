@@ -18,13 +18,10 @@ import java.util.List;
 
 public class ActividadDAO {
 
-    // =============================================
-    // OBTENER ACTIVIDADES POR ESCENARIO
-    // =============================================
     public List<ActividadInteractiva> listarActividadesPorEscenario(int idEscenario) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM actividad_interactiva WHERE id_escenario = ? ORDER BY orden";
         List<ActividadInteractiva> actividades = new ArrayList<>();
-
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idEscenario);
             try (ResultSet rs = ps.executeQuery()) {
@@ -39,16 +36,14 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarActividadesPorEscenario: " + (System.currentTimeMillis() - inicio) + " ms");
         return actividades;
     }
 
-    // =============================================
-    // OBTENER CATEGORÍAS DE UNA ACTIVIDAD
-    // =============================================
     public List<CategoriaActividad> listarCategoriasPorActividad(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM categoria_actividad WHERE id_actividad = ? ORDER BY id_categoria";
         List<CategoriaActividad> categorias = new ArrayList<>();
-
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
@@ -61,18 +56,16 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarCategoriasPorActividad: " + (System.currentTimeMillis() - inicio) + " ms");
         return categorias;
     }
 
-    // =============================================
-    // OBTENER ELEMENTOS DRAG & DROP POR ACTIVIDAD (con id_categoria)
-    // =============================================
     public List<ElementoArrastrable> listarElementosDragAndDrop(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT ea.*, ca.nombre_categoria FROM elemento_arrastrable ea "
                 + "JOIN categoria_actividad ca ON ea.id_categoria = ca.id_categoria "
                 + "WHERE ea.id_actividad = ? ORDER BY ea.id_elemento";
         List<ElementoArrastrable> elementos = new ArrayList<>();
-
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
@@ -87,16 +80,14 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarElementosDragAndDrop: " + (System.currentTimeMillis() - inicio) + " ms");
         return elementos;
     }
 
-    // =============================================
-    // OBTENER PIEZAS MOLECULARES POR ACTIVIDAD
-    // =============================================
     public List<PiezaMolecular> listarPiezasMoleculares(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM pieza_molecular WHERE id_actividad = ? ORDER BY id_pieza";
         List<PiezaMolecular> piezas = new ArrayList<>();
-
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
@@ -111,60 +102,54 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarPiezasMoleculares: " + (System.currentTimeMillis() - inicio) + " ms");
         return piezas;
     }
 
-    // =============================================
-    // VERIFICAR SI EL ESTUDIANTE YA COMPLETÓ UNA ACTIVIDAD
-    // =============================================
     public boolean isActividadCompletada(int idEstudiante, int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT COUNT(*) FROM resultado_actividad WHERE id_estudiante = ? AND id_actividad = ? AND completado = 1";
-
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idEstudiante);
             ps.setInt(2, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1) > 0;
+                    boolean resultado = rs.getInt(1) > 0;
+                    System.out.println("    [BD] isActividadCompletada: " + (System.currentTimeMillis() - inicio) + " ms");
+                    return resultado;
                 }
             }
         }
         return false;
     }
 
-    // =============================================
-    // OBTENER EL MEJOR RESULTADO DEL ESTUDIANTE EN UNA ACTIVIDAD
-    // =============================================
     public ResultadoActividad obtenerMejorResultado(int idEstudiante, int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM resultado_actividad WHERE id_estudiante = ? AND id_actividad = ? ORDER BY puntaje_obtenido DESC LIMIT 1";
-
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idEstudiante);
             ps.setInt(2, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapearResultado(rs);
+                    ResultadoActividad r = mapearResultado(rs);
+                    System.out.println("    [BD] obtenerMejorResultado: " + (System.currentTimeMillis() - inicio) + " ms");
+                    return r;
                 }
             }
         }
         return null;
     }
 
-    // =============================================
-    // GUARDAR RESULTADO DE ACTIVIDAD
-    // =============================================
     public void guardarResultado(ResultadoActividad resultado) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String checkSql = "SELECT id_resultado, puntaje_obtenido FROM resultado_actividad WHERE id_actividad = ? AND id_estudiante = ?";
-
         try (Connection cn = ConexionDB.obtener(); PreparedStatement psCheck = cn.prepareStatement(checkSql)) {
             psCheck.setInt(1, resultado.getIdActividad());
             psCheck.setInt(2, resultado.getIdEstudiante());
             ResultSet rs = psCheck.executeQuery();
-
             if (rs.next()) {
                 int idExistente = rs.getInt("id_resultado");
                 int puntajeExistente = rs.getInt("puntaje_obtenido");
-
                 if (resultado.getPuntajeObtenido() > puntajeExistente) {
                     String updateSql = "UPDATE resultado_actividad SET correctos = ?, incorrectos = ?, puntaje_obtenido = ?, completado = ? WHERE id_resultado = ?";
                     try (PreparedStatement psUpdate = cn.prepareStatement(updateSql)) {
@@ -190,81 +175,77 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] guardarResultado: " + (System.currentTimeMillis() - inicio) + " ms");
     }
 
-    // =============================================
-    // CALCULAR PUNTAJE TOTAL DE UN ESCENARIO
-    // =============================================
     public int calcularPuntajeTotalEscenario(int idEstudiante, int idEscenario) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT COALESCE(AVG(ra.puntaje_obtenido), 0) as promedio "
                 + "FROM resultado_actividad ra "
                 + "JOIN actividad_interactiva ai ON ra.id_actividad = ai.id_actividad "
                 + "WHERE ra.id_estudiante = ? AND ai.id_escenario = ? AND ra.completado = 1";
-
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idEstudiante);
             ps.setInt(2, idEscenario);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("promedio");
+                    int resultado = rs.getInt("promedio");
+                    System.out.println("    [BD] calcularPuntajeTotalEscenario: " + (System.currentTimeMillis() - inicio) + " ms");
+                    return resultado;
                 }
             }
         }
         return 0;
     }
 
-    // =============================================
-    // VERIFICAR SI EL ESTUDIANTE COMPLETÓ TODAS LAS ACTIVIDADES DEL ESCENARIO
-    // =============================================
     public boolean todasActividadesCompletadas(int idEstudiante, int idEscenario) throws SQLException {
-    String sql = "SELECT COUNT(*) as total, "
-            + "SUM(CASE WHEN ra.completado = 1 THEN 1 ELSE 0 END) as completadas "
-            + "FROM actividad_interactiva ai "
-            + "LEFT JOIN ( "
-            + "    SELECT id_actividad, id_estudiante, completado "
-            + "    FROM resultado_actividad ra2 "
-            + "    WHERE id_estudiante = ? "
-            + "    AND id_resultado = ( "
-            + "        SELECT MAX(id_resultado) FROM resultado_actividad "
-            + "        WHERE id_actividad = ra2.id_actividad AND id_estudiante = ra2.id_estudiante "
-            + "    ) "
-            + ") ra ON ai.id_actividad = ra.id_actividad "
-            + "WHERE ai.id_escenario = ?";
-    try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
-        ps.setInt(1, idEstudiante);
-        ps.setInt(2, idEscenario);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                int total = rs.getInt("total");
-                int completadas = rs.getInt("completadas");
-                return total > 0 && total == completadas;
+        long inicio = System.currentTimeMillis();
+        String sql = "SELECT COUNT(*) as total, "
+                + "SUM(CASE WHEN ra.completado = 1 THEN 1 ELSE 0 END) as completadas "
+                + "FROM actividad_interactiva ai "
+                + "LEFT JOIN ( "
+                + "    SELECT id_actividad, id_estudiante, completado "
+                + "    FROM resultado_actividad ra2 "
+                + "    WHERE id_estudiante = ? "
+                + "    AND id_resultado = ( "
+                + "        SELECT MAX(id_resultado) FROM resultado_actividad "
+                + "        WHERE id_actividad = ra2.id_actividad AND id_estudiante = ra2.id_estudiante "
+                + "    ) "
+                + ") ra ON ai.id_actividad = ra.id_actividad "
+                + "WHERE ai.id_escenario = ?";
+        try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, idEstudiante);
+            ps.setInt(2, idEscenario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int total = rs.getInt("total");
+                    int completadas = rs.getInt("completadas");
+                    boolean resultado = total > 0 && total == completadas;
+                    System.out.println("    [BD] todasActividadesCompletadas: " + (System.currentTimeMillis() - inicio) + " ms");
+                    return resultado;
+                }
             }
         }
+        return false;
     }
-    return false;
-}
 
-    // =============================================
-    // MAPEAR RESULTADO
-    // =============================================
-    private ResultadoActividad mapearResultado(ResultSet rs) throws SQLException {
-        ResultadoActividad r = new ResultadoActividad();
-        r.setIdResultado(rs.getInt("id_resultado"));
-        r.setIdActividad(rs.getInt("id_actividad"));
-        r.setIdEstudiante(rs.getInt("id_estudiante"));
-        r.setIdProgreso(rs.getInt("id_progreso"));
-        r.setCorrectos(rs.getInt("correctos"));
-        r.setIncorrectos(rs.getInt("incorrectos"));
-        r.setPuntajeObtenido(rs.getInt("puntaje_obtenido"));
-        r.setCompletado(rs.getBoolean("completado"));
-        Timestamp ts = rs.getTimestamp("creado_en");
-        if (ts != null) {
-            r.setCreadoEn(ts.toLocalDateTime());
+    public void limpiarResultadosAnteriores(int idEstudiante, int idEscenario) throws SQLException {
+        long inicio = System.currentTimeMillis();
+        String sql = "DELETE FROM resultado_actividad "
+                   + "WHERE id_estudiante = ? "
+                   + "AND id_actividad IN ("
+                   + "    SELECT id_actividad FROM actividad_interactiva WHERE id_escenario = ?"
+                   + ")";
+        try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, idEstudiante);
+            ps.setInt(2, idEscenario);
+            ps.executeUpdate();
         }
-        return r;
+        System.out.println("    [BD] limpiarResultadosAnteriores: " + (System.currentTimeMillis() - inicio) + " ms");
     }
 
     public List<ParDipolo> listarParesDipolo(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM par_dipolo WHERE id_actividad = ? ORDER BY id_par";
         List<ParDipolo> pares = new ArrayList<>();
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
@@ -280,11 +261,12 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarParesDipolo: " + (System.currentTimeMillis() - inicio) + " ms");
         return pares;
     }
 
-    // Obtener moléculas para una actividad MATCH_PUENTES_H
     public List<MoleculaPuenteH> listarMoleculasPuenteH(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM molecula_puente_h WHERE id_actividad = ? ORDER BY id_molecula";
         List<MoleculaPuenteH> lista = new ArrayList<>();
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
@@ -302,11 +284,12 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarMoleculasPuenteH: " + (System.currentTimeMillis() - inicio) + " ms");
         return lista;
     }
 
-// Obtener pares correctos para una actividad MATCH_PUENTES_H
     public List<ParPuenteH> listarParesPuenteH(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM par_puente_h WHERE id_actividad = ?";
         List<ParPuenteH> lista = new ArrayList<>();
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
@@ -322,10 +305,12 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarParesPuenteH: " + (System.currentTimeMillis() - inicio) + " ms");
         return lista;
     }
 
     public List<PreguntaSimulacionEstados> listarPreguntasSimulacionEstados(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM pregunta_simulacion_estados WHERE id_actividad = ? ORDER BY id_pregunta";
         List<PreguntaSimulacionEstados> lista = new ArrayList<>();
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
@@ -346,17 +331,21 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarPreguntasSimulacionEstados: " + (System.currentTimeMillis() - inicio) + " ms");
         return lista;
     }
 
     public int obtenerRespuestaCorrectaSimulacionEstados(int idActividad, int idPregunta) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT respuesta_correcta FROM pregunta_simulacion_estados WHERE id_pregunta = ? AND id_actividad = ?";
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idPregunta);
             ps.setInt(2, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("respuesta_correcta");
+                    int resultado = rs.getInt("respuesta_correcta");
+                    System.out.println("    [BD] obtenerRespuestaCorrectaSimulacionEstados: " + (System.currentTimeMillis() - inicio) + " ms");
+                    return resultado;
                 }
             }
         }
@@ -364,6 +353,7 @@ public class ActividadDAO {
     }
 
     public List<FenomenoPropiedad> listarFenomenosPropiedad(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM fenomeno_propiedad WHERE id_actividad = ? ORDER BY id_fenomeno";
         List<FenomenoPropiedad> lista = new ArrayList<>();
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
@@ -379,17 +369,21 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarFenomenosPropiedad: " + (System.currentTimeMillis() - inicio) + " ms");
         return lista;
     }
 
     public String obtenerPropiedadCorrecta(int idActividad, int idFenomeno) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT propiedad_correcta FROM fenomeno_propiedad WHERE id_fenomeno = ? AND id_actividad = ?";
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idFenomeno);
             ps.setInt(2, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("propiedad_correcta");
+                    String resultado = rs.getString("propiedad_correcta");
+                    System.out.println("    [BD] obtenerPropiedadCorrecta: " + (System.currentTimeMillis() - inicio) + " ms");
+                    return resultado;
                 }
             }
         }
@@ -397,6 +391,7 @@ public class ActividadDAO {
     }
 
     public List<PreguntaSimulacionEbullicion> listarPreguntasSimulacionEbullicion(int idActividad) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT * FROM pregunta_simulacion_ebullicion WHERE id_actividad = ? ORDER BY id_pregunta";
         List<PreguntaSimulacionEbullicion> lista = new ArrayList<>();
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
@@ -419,41 +414,60 @@ public class ActividadDAO {
                 }
             }
         }
+        System.out.println("    [BD] listarPreguntasSimulacionEbullicion: " + (System.currentTimeMillis() - inicio) + " ms");
         return lista;
     }
 
     public int obtenerRespuestaCorrectaEbullicion(int idActividad, int idPregunta) throws SQLException {
+        long inicio = System.currentTimeMillis();
         String sql = "SELECT respuesta_correcta FROM pregunta_simulacion_ebullicion WHERE id_pregunta = ? AND id_actividad = ?";
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idPregunta);
             ps.setInt(2, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("respuesta_correcta");
+                    int resultado = rs.getInt("respuesta_correcta");
+                    System.out.println("    [BD] obtenerRespuestaCorrectaEbullicion: " + (System.currentTimeMillis() - inicio) + " ms");
+                    return resultado;
                 }
             }
         }
         return -1;
     }
-    
+
     public ActividadInteractiva obtenerActividadPorId(int idActividad) throws SQLException {
-    String sql = "SELECT * FROM actividad_interactiva WHERE id_actividad = ?";
-    try (Connection cn = ConexionDB.obtener();
-         PreparedStatement ps = cn.prepareStatement(sql)) {
-        ps.setInt(1, idActividad);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                ActividadInteractiva a = new ActividadInteractiva();
-                a.setIdActividad(rs.getInt("id_actividad"));
-                a.setIdEscenario(rs.getInt("id_escenario"));
-                a.setTipo(rs.getString("tipo"));
-                a.setOrden(rs.getInt("orden"));
-                a.setPesoPuntaje(rs.getInt("peso_puntaje"));
-                return a;
+        long inicio = System.currentTimeMillis();
+        String sql = "SELECT * FROM actividad_interactiva WHERE id_actividad = ?";
+        try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, idActividad);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    ActividadInteractiva a = new ActividadInteractiva();
+                    a.setIdActividad(rs.getInt("id_actividad"));
+                    a.setIdEscenario(rs.getInt("id_escenario"));
+                    a.setTipo(rs.getString("tipo"));
+                    a.setOrden(rs.getInt("orden"));
+                    a.setPesoPuntaje(rs.getInt("peso_puntaje"));
+                    System.out.println("    [BD] obtenerActividadPorId: " + (System.currentTimeMillis() - inicio) + " ms");
+                    return a;
+                }
             }
         }
+        return null;
     }
-    return null;
-}
 
+    private ResultadoActividad mapearResultado(ResultSet rs) throws SQLException {
+        ResultadoActividad r = new ResultadoActividad();
+        r.setIdResultado(rs.getInt("id_resultado"));
+        r.setIdActividad(rs.getInt("id_actividad"));
+        r.setIdEstudiante(rs.getInt("id_estudiante"));
+        r.setIdProgreso(rs.getInt("id_progreso"));
+        r.setCorrectos(rs.getInt("correctos"));
+        r.setIncorrectos(rs.getInt("incorrectos"));
+        r.setPuntajeObtenido(rs.getInt("puntaje_obtenido"));
+        r.setCompletado(rs.getBoolean("completado"));
+        Timestamp ts = rs.getTimestamp("creado_en");
+        if (ts != null) r.setCreadoEn(ts.toLocalDateTime());
+        return r;
+    }
 }

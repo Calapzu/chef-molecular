@@ -21,10 +21,35 @@ public class MenuServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         Estudiante est = (Estudiante) req.getSession().getAttribute("estudiante");
+
+        long inicioTotal = System.currentTimeMillis();
+        System.out.println("\n========== MEDICION: Cargar Menú ==========");
+
         try {
+            // JSP → Servlet
+            long inicioServlet = System.currentTimeMillis();
+            System.out.println("[Servlet] Solicitud recibida");
+
+            // Servlet → Lógica → DAO → BD
+            long inicioDAO = System.currentTimeMillis();
             List<ProgresoEscenario> progresos = progresoDAO.listarPorEstudiante(est.getIdEstudiante());
+            long finDAO = System.currentTimeMillis();
+            System.out.println("[DAO→BD] listarPorEstudiante: " + (finDAO - inicioDAO) + " ms");
+
+            // Lógica de gamificación
+            long inicioLogica = System.currentTimeMillis();
+            String rangoTexto = gamLogica.rangoTexto(est.getRango());
+            long finLogica = System.currentTimeMillis();
+            System.out.println("[Logica] rangoTexto: " + (finLogica - inicioLogica) + " ms");
+
             req.setAttribute("progresos", progresos);
-            req.setAttribute("rangoTexto", gamLogica.rangoTexto(est.getRango()));
+            req.setAttribute("rangoTexto", rangoTexto);
+
+            long finServlet = System.currentTimeMillis();
+            System.out.println("[Servlet] Procesamiento total servlet: " + (finServlet - inicioServlet) + " ms");
+            System.out.println("[TOTAL] Cargar Menú: " + (finServlet - inicioTotal) + " ms");
+            System.out.println("===========================================\n");
+
             req.getRequestDispatcher("/menu.jsp").forward(req, res);
         } catch (SQLException ex) {
             throw new ServletException(ex);

@@ -17,21 +17,52 @@ public class GamificacionLogica {
     private final RecetaDAO     recetaDAO     = new RecetaDAO();
 
     public void procesarLogros(int idEstudiante, int idEscenario) throws SQLException {
-        int totalEstrellas = progresoDAO.sumarEstrellasTotales(idEstudiante);
-        String nuevoRango  = calcularRango(totalEstrellas);
-        estudianteDAO.actualizarRangoYEstrellas(idEstudiante, nuevoRango, totalEstrellas);
+        long inicioTotal = System.currentTimeMillis();
+        System.out.println("\n--- [GamificacionLogica] procesarLogros ---");
 
+        long t1 = System.currentTimeMillis();
+        int totalEstrellas = progresoDAO.sumarEstrellasTotales(idEstudiante);
+        System.out.println("[DAO→BD] sumarEstrellasTotales: " + (System.currentTimeMillis() - t1) + " ms");
+
+        long t2 = System.currentTimeMillis();
+        String nuevoRango = calcularRango(totalEstrellas);
+        System.out.println("[Logica] calcularRango: " + (System.currentTimeMillis() - t2) + " ms");
+
+        long t3 = System.currentTimeMillis();
+        estudianteDAO.actualizarRangoYEstrellas(idEstudiante, nuevoRango, totalEstrellas);
+        System.out.println("[DAO→BD] actualizarRangoYEstrellas: " + (System.currentTimeMillis() - t3) + " ms");
+
+        long t4 = System.currentTimeMillis();
         List<Insignia> todas = insigniaDAO.listarTodas();
+        System.out.println("[DAO→BD] listarInsignias: " + (System.currentTimeMillis() - t4) + " ms");
+
+        long t5 = System.currentTimeMillis();
         for (Insignia insignia : todas) {
             if (cumpleCondicion(insignia, idEstudiante, idEscenario, totalEstrellas)) {
                 insigniaDAO.otorgar(insignia.getIdInsignia(), idEstudiante);
             }
         }
+        System.out.println("[Logica→DAO→BD] evaluarYOtorgarInsignias: " + (System.currentTimeMillis() - t5) + " ms");
+
+        System.out.println("[TOTAL] procesarLogros: " + (System.currentTimeMillis() - inicioTotal) + " ms");
+        System.out.println("-------------------------------------------\n");
     }
 
     public List<Insignia> obtenerInsigniasNuevas(int idEstudiante) throws SQLException {
+        long inicioTotal = System.currentTimeMillis();
+        System.out.println("\n--- [GamificacionLogica] obtenerInsigniasNuevas ---");
+
+        long t1 = System.currentTimeMillis();
         List<Insignia> nuevas = insigniaDAO.listarNuevas(idEstudiante);
+        System.out.println("[DAO→BD] listarNuevas: " + (System.currentTimeMillis() - t1) + " ms");
+
+        long t2 = System.currentTimeMillis();
         insigniaDAO.marcarNotificadas(idEstudiante);
+        System.out.println("[DAO→BD] marcarNotificadas: " + (System.currentTimeMillis() - t2) + " ms");
+
+        System.out.println("[TOTAL] obtenerInsigniasNuevas: " + (System.currentTimeMillis() - inicioTotal) + " ms");
+        System.out.println("---------------------------------------------------\n");
+
         return nuevas;
     }
 
@@ -61,10 +92,12 @@ public class GamificacionLogica {
                 totalEstrellas >= insignia.getValorCondicion();
 
             case "ESCENARIOS_COMPLETADOS" -> {
+                long t = System.currentTimeMillis();
                 long completados = progresoDAO.listarPorEstudiante(idEstudiante)
                         .stream()
                         .filter(ProgresoEscenario::isCompletado)
                         .count();
+                System.out.println("[DAO→BD] listarParaContarCompletados: " + (System.currentTimeMillis() - t) + " ms");
                 yield completados >= insignia.getValorCondicion();
             }
 
@@ -74,13 +107,17 @@ public class GamificacionLogica {
             }
 
             case "RECETAS_DESBLOQUEADAS" -> {
+                long t = System.currentTimeMillis();
                 int recetas = recetaDAO.contarDesbloqueadas(idEstudiante);
+                System.out.println("[DAO→BD] contarRecetasDesbloqueadas: " + (System.currentTimeMillis() - t) + " ms");
                 yield recetas >= insignia.getValorCondicion();
             }
 
             case "PERFECTO_ESCENARIO" -> {
                 if (insignia.getIdEscenarioAsociado() != idEscenario) yield false;
+                long t = System.currentTimeMillis();
                 ProgresoEscenario p = progresoDAO.buscar(idEstudiante, idEscenario);
+                System.out.println("[DAO→BD] buscarProgresoParaInsignia: " + (System.currentTimeMillis() - t) + " ms");
                 yield p != null && p.getEstrellas() >= insignia.getValorCondicion();
             }
 

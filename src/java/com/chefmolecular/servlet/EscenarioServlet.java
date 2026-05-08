@@ -21,8 +21,6 @@ public class EscenarioServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String idStr = req.getParameter("id");
-
-        // Si no viene el parámetro, volver al menú
         if (idStr == null || idStr.trim().isEmpty()) {
             res.sendRedirect(req.getContextPath() + "/menu");
             return;
@@ -31,22 +29,35 @@ public class EscenarioServlet extends HttpServlet {
         int        idEscenario = Integer.parseInt(idStr);
         Estudiante est         = (Estudiante) req.getSession().getAttribute("estudiante");
 
+        long inicioTotal = System.currentTimeMillis();
+        System.out.println("\n========== MEDICION: Cargar Escenario " + idEscenario + " ==========");
+
         try {
-            // Verificar que el escenario está desbloqueado para este estudiante
-            if (!escLogica.estaDesbloqueado(est.getIdEstudiante(), idEscenario)) {
+            // Servlet → Lógica
+            long inicioLogica = System.currentTimeMillis();
+            boolean desbloqueado = escLogica.estaDesbloqueado(est.getIdEstudiante(), idEscenario);
+            long finLogica = System.currentTimeMillis();
+            System.out.println("[Logica→DAO→BD] estaDesbloqueado: " + (finLogica - inicioLogica) + " ms");
+
+            if (!desbloqueado) {
                 res.sendRedirect(req.getContextPath() + "/menu");
                 return;
             }
 
-            // Obtener progreso del escenario para mostrarlo en la vista
+            // DAO → BD
+            long inicioDAO = System.currentTimeMillis();
             ProgresoEscenario progreso = progresoDAO.buscar(est.getIdEstudiante(), idEscenario);
+            long finDAO = System.currentTimeMillis();
+            System.out.println("[DAO→BD] buscarProgreso: " + (finDAO - inicioDAO) + " ms");
 
             req.setAttribute("idEscenario", idEscenario);
             req.setAttribute("progreso",    progreso);
 
-            // Redirigir a la JSP correspondiente según el número de escenario
-            req.getRequestDispatcher("/escenarios/escenario" + idEscenario + ".jsp")
-               .forward(req, res);
+            long finTotal = System.currentTimeMillis();
+            System.out.println("[TOTAL] Cargar Escenario: " + (finTotal - inicioTotal) + " ms");
+            System.out.println("=====================================================\n");
+
+            req.getRequestDispatcher("/escenarios/escenario" + idEscenario + ".jsp").forward(req, res);
 
         } catch (SQLException ex) {
             throw new ServletException(ex);

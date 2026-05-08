@@ -34,14 +34,29 @@ public class ActividadServlet extends HttpServlet {
         int idEscenario = Integer.parseInt(idEscStr);
         Estudiante estudiante = (Estudiante) request.getSession().getAttribute("estudiante");
 
+        long inicioTotal = System.currentTimeMillis();
+        System.out.println("\n========== MEDICION: Cargar Actividad (Escenario " + idEscenario + ") ==========");
+
         try {
-            if (!escenarioLogica.estaDesbloqueado(estudiante.getIdEstudiante(), idEscenario)) {
+            // Lógica → DAO → BD: verificar desbloqueo
+            long t1 = System.currentTimeMillis();
+            boolean desbloqueado = escenarioLogica.estaDesbloqueado(estudiante.getIdEstudiante(), idEscenario);
+            System.out.println("[Logica→DAO→BD] estaDesbloqueado: " + (System.currentTimeMillis() - t1) + " ms");
+
+            if (!desbloqueado) {
                 response.sendRedirect(request.getContextPath() + "/menu");
                 return;
             }
 
+            // DAO → BD: obtener progreso
+            long t2 = System.currentTimeMillis();
             ProgresoEscenario progreso = progresoDAO.buscar(estudiante.getIdEstudiante(), idEscenario);
+            System.out.println("[DAO→BD] buscarProgreso: " + (System.currentTimeMillis() - t2) + " ms");
+
+            // Lógica → DAO → BD: obtener actividades
+            long t3 = System.currentTimeMillis();
             List<ActividadInteractiva> actividades = actividadLogica.obtenerActividadesDelEscenario(idEscenario);
+            System.out.println("[Logica→DAO→BD] obtenerActividades: " + (System.currentTimeMillis() - t3) + " ms");
 
             if (actividades == null || actividades.isEmpty()) {
                 response.sendRedirect(request.getContextPath() + "/menu");
@@ -51,41 +66,46 @@ public class ActividadServlet extends HttpServlet {
             String idxStr = request.getParameter("actividadIdx");
             int actividadIdx = (idxStr != null) ? Integer.parseInt(idxStr) : 0;
 
+            if (actividadIdx == 0) {
+                //actividadLogica.limpiarResultadosAnteriores(estudiante.getIdEstudiante(), idEscenario);
+            }
+
             if (actividadIdx >= actividades.size()) {
                 response.sendRedirect(request.getContextPath() + "/resultadoActividad.jsp?escenario=" + idEscenario);
                 return;
             }
 
             ActividadInteractiva actividadActual = actividades.get(actividadIdx);
-            boolean yaCompletada = actividadLogica.isEscenarioCompletado(estudiante.getIdEstudiante(), idEscenario);
 
-            // Cargar datos según tipo
+            // Lógica → DAO → BD: verificar si ya completó
+            long t4 = System.currentTimeMillis();
+            boolean yaCompletada = actividadLogica.isEscenarioCompletado(estudiante.getIdEstudiante(), idEscenario);
+            System.out.println("[Logica→DAO→BD] isEscenarioCompletado: " + (System.currentTimeMillis() - t4) + " ms");
+
+            // DAO → BD: cargar datos según tipo
+            long t5 = System.currentTimeMillis();
             if ("DRAG_AND_DROP".equals(actividadActual.getTipo())) {
                 List<ElementoArrastrable> elementos = actividadLogica.obtenerElementosDragAndDrop(actividadActual.getIdActividad());
                 List<CategoriaActividad> categorias = actividadLogica.obtenerCategoriasPorActividad(actividadActual.getIdActividad());
                 request.setAttribute("elementos", elementos);
                 request.setAttribute("categorias", categorias);
-
             } else if ("MATCH_DIPOLOS".equals(actividadActual.getTipo())) {
                 List<ParDipolo> pares = actividadLogica.obtenerParesDipolo(actividadActual.getIdActividad());
                 request.setAttribute("pares", pares);
-
             } else if ("MATCH_PUENTES_H".equals(actividadActual.getTipo())) {
                 List<MoleculaPuenteH> moleculas = actividadLogica.obtenerMoleculasPuenteH(actividadActual.getIdActividad());
                 request.setAttribute("moleculas", moleculas);
-
             } else if ("SIMULACION_ESTADOS".equals(actividadActual.getTipo())) {
                 List<PreguntaSimulacionEstados> preguntas = actividadLogica.obtenerPreguntasSimulacionEstados(actividadActual.getIdActividad());
                 request.setAttribute("preguntas", preguntas);
-
             } else if ("IDENTIFICACION_PROPIEDAD".equals(actividadActual.getTipo())) {
                 List<FenomenoPropiedad> fenomenos = actividadLogica.obtenerFenomenosPropiedad(actividadActual.getIdActividad());
                 request.setAttribute("fenomenos", fenomenos);
-
             } else if ("SIMULACION_EBULLICION".equals(actividadActual.getTipo())) {
                 List<PreguntaSimulacionEbullicion> preguntas = actividadLogica.obtenerPreguntasSimulacionEbullicion(actividadActual.getIdActividad());
                 request.setAttribute("preguntas", preguntas);
             }
+            System.out.println("[DAO→BD] cargarDatosActividad (" + actividadActual.getTipo() + "): " + (System.currentTimeMillis() - t5) + " ms");
 
             request.setAttribute("actividad", actividadActual);
             request.setAttribute("actividades", actividades);
@@ -94,6 +114,9 @@ public class ActividadServlet extends HttpServlet {
             request.setAttribute("idEscenario", idEscenario);
             request.setAttribute("progreso", progreso);
             request.setAttribute("yaCompletada", yaCompletada);
+
+            System.out.println("[TOTAL] Cargar Actividad: " + (System.currentTimeMillis() - inicioTotal) + " ms");
+            System.out.println("=============================================================\n");
 
             request.getRequestDispatcher("/actividad.jsp").forward(request, response);
 
@@ -110,40 +133,38 @@ public class ActividadServlet extends HttpServlet {
         int idEscenario = Integer.parseInt(request.getParameter("idEscenario"));
         int idActividad = Integer.parseInt(request.getParameter("idActividad"));
         int actividadIdx = Integer.parseInt(request.getParameter("actividadIdx"));
-        System.out.println("=== actividadIdx recibido: " + actividadIdx);
-        try {
-            System.out.println("=== totalActividades del escenario: " + actividadLogica.obtenerActividadesDelEscenario(idEscenario).size());
-        } catch (SQLException ex) {
-            System.getLogger(ActividadServlet.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
-        try {
-            System.out.println("=== todasCompletadas: " + actividadLogica.isEscenarioCompletado(estudiante.getIdEstudiante(), idEscenario));
-        } catch (SQLException ex) {
-            System.getLogger(ActividadServlet.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
         String respuestasJson = request.getParameter("respuestas");
 
-        System.out.println("=== Respuestas recibidas: " + respuestasJson);
+        long inicioTotal = System.currentTimeMillis();
+        System.out.println("\n========== MEDICION: Enviar Respuesta Actividad ==========");
 
         try {
+            // DAO → BD: buscar progreso
+            long t1 = System.currentTimeMillis();
             ProgresoEscenario progreso = progresoDAO.buscar(estudiante.getIdEstudiante(), idEscenario);
+            System.out.println("[DAO→BD] buscarProgreso: " + (System.currentTimeMillis() - t1) + " ms");
+
             if (progreso == null) {
                 request.getSession().setAttribute("mensajeError", "Progreso no encontrado.");
                 response.sendRedirect(request.getContextPath() + "/escenario?id=" + idEscenario);
                 return;
             }
 
+            // DAO → BD: obtener actividad
+            long t2 = System.currentTimeMillis();
             ActividadInteractiva actividad = actividadLogica.obtenerActividadPorId(idActividad);
-            System.out.println("=== Actividad tipo: " + actividad.getTipo());
+            System.out.println("[DAO→BD] obtenerActividadPorId: " + (System.currentTimeMillis() - t2) + " ms");
+
             if (actividad == null) {
                 request.getSession().setAttribute("mensajeError", "Actividad no encontrada.");
                 response.sendRedirect(request.getContextPath() + "/escenario?id=" + idEscenario);
                 return;
             }
 
+            // Lógica: evaluar respuesta
+            long t3 = System.currentTimeMillis();
             ActividadLogica.EvaluacionResultado evaluacion = null;
             try {
-                // Evaluar según el tipo
                 if ("DRAG_AND_DROP".equals(actividad.getTipo())) {
                     evaluacion = actividadLogica.evaluarDragAndDrop(idActividad, respuestasJson);
                 } else if ("MATCH_DIPOLOS".equals(actividad.getTipo())) {
@@ -156,26 +177,36 @@ public class ActividadServlet extends HttpServlet {
                     evaluacion = actividadLogica.evaluarIdentificacionPropiedad(idActividad, respuestasJson);
                 } else if ("SIMULACION_EBULLICION".equals(actividad.getTipo())) {
                     evaluacion = actividadLogica.evaluarSimulacionEbullicion(idActividad, respuestasJson);
-                } else {
-                    request.getSession().setAttribute("mensajeError", "Tipo de actividad no soportado.");
-                    response.sendRedirect(request.getContextPath() + "/escenario?id=" + idEscenario);
-                    return;
                 }
-            } catch (JSONException e) {
-                request.getSession().setAttribute("mensajeError", "Formato de respuestas inválido. Intenta de nuevo.");
+            } catch (org.json.JSONException e) {
+                request.getSession().setAttribute("mensajeError", "Formato de respuestas inválido.");
                 response.sendRedirect(request.getContextPath() + "/escenario?id=" + idEscenario);
                 return;
             }
+            System.out.println("[Logica→DAO→BD] evaluarRespuesta (" + actividad.getTipo() + "): " + (System.currentTimeMillis() - t3) + " ms");
 
-            actividadLogica.guardarResultadoActividad(estudiante.getIdEstudiante(), progreso.getIdProgreso(),
-                    idActividad, evaluacion);
+            // DAO → BD: guardar resultado
+            long t4 = System.currentTimeMillis();
+            actividadLogica.guardarResultadoActividad(estudiante.getIdEstudiante(), progreso.getIdProgreso(), idActividad, evaluacion);
+            System.out.println("[DAO→BD] guardarResultadoActividad: " + (System.currentTimeMillis() - t4) + " ms");
 
+            // Lógica → DAO → BD: verificar si completó todo
+            long t5 = System.currentTimeMillis();
             boolean todasCompletadas = actividadLogica.isEscenarioCompletado(estudiante.getIdEstudiante(), idEscenario);
+            System.out.println("[Logica→DAO→BD] isEscenarioCompletado: " + (System.currentTimeMillis() - t5) + " ms");
 
             if (todasCompletadas) {
+                // Lógica: calcular estrellas
+                long t6 = System.currentTimeMillis();
                 int estrellas = actividadLogica.calcularEstrellasEscenario(estudiante.getIdEstudiante(), idEscenario);
+                System.out.println("[Logica→DAO→BD] calcularEstrellas: " + (System.currentTimeMillis() - t6) + " ms");
+
                 boolean completado = estrellas >= 1;
+
+                // DAO → BD: actualizar progreso
+                long t7 = System.currentTimeMillis();
                 progresoDAO.actualizarProgreso(estudiante.getIdEstudiante(), idEscenario, estrellas, completado);
+                System.out.println("[DAO→BD] actualizarProgreso: " + (System.currentTimeMillis() - t7) + " ms");
 
                 if (completado) {
                     progresoDAO.desbloquearSiguiente(estudiante.getIdEstudiante(), idEscenario);
@@ -188,12 +219,19 @@ public class ActividadServlet extends HttpServlet {
                 request.getSession().setAttribute("mensajeExito",
                         String.format("¡Felicitaciones! Completaste el escenario. Has ganado %d estrellas.", estrellas));
 
+                System.out.println("[TOTAL] Enviar Respuesta (escenario completado): " + (System.currentTimeMillis() - inicioTotal) + " ms");
+                System.out.println("===========================================================\n");
+
                 response.sendRedirect(request.getContextPath() + "/resultadoActividad.jsp?escenario=" + idEscenario);
 
             } else {
                 int siguienteIdx = actividadIdx + 1;
+                System.out.println("[TOTAL] Enviar Respuesta (siguiente actividad " + siguienteIdx + "): " + (System.currentTimeMillis() - inicioTotal) + " ms");
+                System.out.println("===========================================================\n");
+
                 response.sendRedirect(request.getContextPath() + "/actividad?escenario=" + idEscenario + "&actividadIdx=" + siguienteIdx);
             }
+
         } catch (SQLException ex) {
             throw new ServletException(ex);
         }
