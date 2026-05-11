@@ -17,28 +17,23 @@ public class LibroRecetasServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
-        Estudiante est = (Estudiante) req.getSession().getAttribute("estudiante");
+    Estudiante est = (Estudiante) req.getSession().getAttribute("estudiante");
 
-        long inicioTotal = System.currentTimeMillis();
-        System.out.println("\n========== MEDICION: Cargar Libro de Recetas ==========");
+    try {
+        // ✅ Obtener listas separadas desde el DAO
+        List<Receta> desbloqueadas = recetaDAO.obtenerDesbloqueadas(est.getIdEstudiante());
+        List<Receta> bloqueadas   = recetaDAO.obtenerBloqueadas(est.getIdEstudiante());
 
-        try {
-            // DAO → BD: listar recetas con estado
-            long t1 = System.currentTimeMillis();
-            List<Receta> recetas = recetaDAO.listarTodasConEstado(est.getIdEstudiante());
-            System.out.println("[DAO→BD] listarTodasConEstado: " + (System.currentTimeMillis() - t1) + " ms");
+        // ✅ Enviar cada lista con el nombre exacto que espera el JSP
+        req.setAttribute("recetasDesbloqueadas", desbloqueadas);
+        req.setAttribute("recetasBloqueadas",   bloqueadas);
 
-            req.setAttribute("recetas", recetas);
+        req.getRequestDispatcher("/libroRecetas.jsp").forward(req, res);
 
-            System.out.println("[TOTAL] Cargar Libro de Recetas: " + (System.currentTimeMillis() - inicioTotal) + " ms");
-            System.out.println("=======================================================\n");
-
-            req.getRequestDispatcher("/libroRecetas.jsp").forward(req, res);
-
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
-        }
+    } catch (SQLException ex) {
+        throw new ServletException(ex);
     }
+}
 }
