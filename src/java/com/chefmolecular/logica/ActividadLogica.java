@@ -58,7 +58,9 @@ public class ActividadLogica {
         for (int j = 0; j < respuestas.length(); j++) {
             JSONObject resp = respuestas.getJSONObject(j);
             int id = resp.optInt("idElemento", -1);
-            if (id != -1) respuestasMap.put(id, resp.optString("categoria", null));
+            if (id != -1) {
+                respuestasMap.put(id, resp.optString("categoria", null));
+            }
         }
 
         int correctos = 0;
@@ -110,18 +112,44 @@ public class ActividadLogica {
         long inicio = System.currentTimeMillis();
         System.out.println("\n--- [ActividadLogica] calcularEstrellasEscenario ---");
 
-        long t1 = System.currentTimeMillis();
+        // Escenario 4 → escala fija por aciertos
+        if (idEscenario == 4) {
+            long t1 = System.currentTimeMillis();
+            int totalAciertos = actividadDAO.sumarAciertosEscenario(idEstudiante, idEscenario);
+            System.out.println("[DAO→BD] sumarAciertosEscenario: " + (System.currentTimeMillis() - t1) + " ms");
+
+            int estrellas;
+            if (totalAciertos >= 5) {
+                estrellas = 3;
+            } else if (totalAciertos >= 4) {
+                estrellas = 2;
+            } else if (totalAciertos >= 3) {
+                estrellas = 1;
+            } else {
+                estrellas = 0;
+            }
+
+            System.out.println("[TOTAL] calcularEstrellasEscenario (fija): " + (System.currentTimeMillis() - inicio) + " ms");
+            return estrellas;
+        }
+
+        // Resto de escenarios → porcentaje sobre puntaje promedio
+        long t2 = System.currentTimeMillis();
         int puntajePromedio = actividadDAO.calcularPuntajeTotalEscenario(idEstudiante, idEscenario);
-        System.out.println("[DAO→BD] calcularPuntajeTotalEscenario: " + (System.currentTimeMillis() - t1) + " ms");
+        System.out.println("[DAO→BD] calcularPuntajeTotalEscenario: " + (System.currentTimeMillis() - t2) + " ms");
 
         int estrellas;
-        if (puntajePromedio >= 90) estrellas = 3;
-        else if (puntajePromedio >= 70) estrellas = 2;
-        else if (puntajePromedio >= 50) estrellas = 1;
-        else estrellas = 0;
+        if (puntajePromedio >= 90) {
+            estrellas = 3;
+        } else if (puntajePromedio >= 70) {
+            estrellas = 2;
+        } else if (puntajePromedio >= 50) {
+            estrellas = 1;
+        } else {
+            estrellas = 0;
+        }
 
-        System.out.println("[TOTAL] calcularEstrellasEscenario: " + (System.currentTimeMillis() - inicio) + " ms");
-        System.out.println("----------------------------------------------------\n");
+        System.out.println("[TOTAL] calcularEstrellasEscenario (porcentaje): " + (System.currentTimeMillis() - inicio) + " ms");
         return estrellas;
     }
 
@@ -157,8 +185,11 @@ public class ActividadLogica {
         int total = paresCorrectos.size();
         if (total == 0) {
             EvaluacionResultado resultado = new EvaluacionResultado();
-            resultado.setCorrectos(0); resultado.setIncorrectos(0);
-            resultado.setPuntaje(0); resultado.setCompletado(false); resultado.setTotalElementos(0);
+            resultado.setCorrectos(0);
+            resultado.setIncorrectos(0);
+            resultado.setPuntaje(0);
+            resultado.setCompletado(false);
+            resultado.setTotalElementos(0);
             return resultado;
         }
 
@@ -171,10 +202,14 @@ public class ActividadLogica {
             String pos = obj.getString("extremoPositivo");
             String neg = obj.getString("extremoNegativo");
             String clave = pos + "|" + neg;
-            if (paresAcertados.containsKey(clave)) continue;
+            if (paresAcertados.containsKey(clave)) {
+                continue;
+            }
             for (ParDipolo par : paresCorrectos) {
                 if (par.getExtremoPositivo().equals(pos) && par.getExtremoNegativo().equals(neg)) {
-                    correctos++; paresAcertados.put(clave, true); break;
+                    correctos++;
+                    paresAcertados.put(clave, true);
+                    break;
                 }
             }
         }
@@ -182,8 +217,11 @@ public class ActividadLogica {
 
         int puntaje = (correctos * 100 / total);
         EvaluacionResultado resultado = new EvaluacionResultado();
-        resultado.setCorrectos(correctos); resultado.setIncorrectos(total - correctos);
-        resultado.setPuntaje(puntaje); resultado.setCompletado(puntaje >= 50); resultado.setTotalElementos(total);
+        resultado.setCorrectos(correctos);
+        resultado.setIncorrectos(total - correctos);
+        resultado.setPuntaje(puntaje);
+        resultado.setCompletado(puntaje >= 50);
+        resultado.setTotalElementos(total);
 
         System.out.println("[TOTAL] evaluarMatchDipolos: " + (System.currentTimeMillis() - inicio) + " ms");
         System.out.println("---------------------------------------------\n");
@@ -204,10 +242,12 @@ public class ActividadLogica {
         int totalCorrectos = paresCorrectos.size();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
-            int id1 = obj.getInt("idMolecula1"); int id2 = obj.getInt("idMolecula2");
+            int id1 = obj.getInt("idMolecula1");
+            int id2 = obj.getInt("idMolecula2");
             for (ParPuenteH par : paresCorrectos) {
-                if ((par.getIdMolecula1()==id1&&par.getIdMolecula2()==id2)||(par.getIdMolecula1()==id2&&par.getIdMolecula2()==id1)) {
-                    correctos++; break;
+                if ((par.getIdMolecula1() == id1 && par.getIdMolecula2() == id2) || (par.getIdMolecula1() == id2 && par.getIdMolecula2() == id1)) {
+                    correctos++;
+                    break;
                 }
             }
         }
@@ -215,8 +255,11 @@ public class ActividadLogica {
 
         int puntaje = totalCorrectos > 0 ? (correctos * 100 / totalCorrectos) : 0;
         EvaluacionResultado resultado = new EvaluacionResultado();
-        resultado.setCorrectos(correctos); resultado.setIncorrectos(jsonArray.length() - correctos);
-        resultado.setPuntaje(puntaje); resultado.setCompletado(puntaje >= 50); resultado.setTotalElementos(jsonArray.length());
+        resultado.setCorrectos(correctos);
+        resultado.setIncorrectos(jsonArray.length() - correctos);
+        resultado.setPuntaje(puntaje);
+        resultado.setCompletado(puntaje >= 50);
+        resultado.setTotalElementos(jsonArray.length());
 
         System.out.println("[TOTAL] evaluarMatchPuentesH: " + (System.currentTimeMillis() - inicio) + " ms");
         System.out.println("----------------------------------------------\n");
@@ -256,7 +299,8 @@ public class ActividadLogica {
         System.out.println("\n--- [ActividadLogica] evaluarSimulacionEstados ---");
 
         JSONArray array = new JSONArray(respuestasJson);
-        int correctos = 0; int total = array.length();
+        int correctos = 0;
+        int total = array.length();
         for (int i = 0; i < total; i++) {
             JSONObject obj = array.getJSONObject(i);
             int idPregunta = obj.getInt("idPregunta");
@@ -264,13 +308,18 @@ public class ActividadLogica {
             long t1 = System.currentTimeMillis();
             int correcta = actividadDAO.obtenerRespuestaCorrectaSimulacionEstados(idActividad, idPregunta);
             System.out.println("[DAO→BD] obtenerRespuestaCorrecta: " + (System.currentTimeMillis() - t1) + " ms");
-            if (seleccionada == correcta) correctos++;
+            if (seleccionada == correcta) {
+                correctos++;
+            }
         }
 
         int puntaje = total > 0 ? (correctos * 100 / total) : 0;
         EvaluacionResultado resultado = new EvaluacionResultado();
-        resultado.setCorrectos(correctos); resultado.setIncorrectos(total - correctos);
-        resultado.setPuntaje(puntaje); resultado.setCompletado(puntaje >= 50); resultado.setTotalElementos(total);
+        resultado.setCorrectos(correctos);
+        resultado.setIncorrectos(total - correctos);
+        resultado.setPuntaje(puntaje);
+        resultado.setCompletado(puntaje >= 50);
+        resultado.setTotalElementos(total);
 
         System.out.println("[TOTAL] evaluarSimulacionEstados: " + (System.currentTimeMillis() - inicio) + " ms");
         System.out.println("-------------------------------------------------\n");
@@ -289,7 +338,8 @@ public class ActividadLogica {
         System.out.println("\n--- [ActividadLogica] evaluarIdentificacionPropiedad ---");
 
         JSONArray jsonArray = new JSONArray(respuestasJson);
-        int correctos = 0; int total = jsonArray.length();
+        int correctos = 0;
+        int total = jsonArray.length();
         for (int i = 0; i < total; i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
             int idFenomeno = obj.getInt("idFenomeno");
@@ -297,13 +347,18 @@ public class ActividadLogica {
             long t1 = System.currentTimeMillis();
             String correcta = actividadDAO.obtenerPropiedadCorrecta(idActividad, idFenomeno);
             System.out.println("[DAO→BD] obtenerPropiedadCorrecta: " + (System.currentTimeMillis() - t1) + " ms");
-            if (correcta != null && correcta.equals(seleccionada)) correctos++;
+            if (correcta != null && correcta.equals(seleccionada)) {
+                correctos++;
+            }
         }
 
         int puntaje = total > 0 ? (correctos * 100 / total) : 0;
         EvaluacionResultado resultado = new EvaluacionResultado();
-        resultado.setCorrectos(correctos); resultado.setIncorrectos(total - correctos);
-        resultado.setPuntaje(puntaje); resultado.setCompletado(puntaje >= 50); resultado.setTotalElementos(total);
+        resultado.setCorrectos(correctos);
+        resultado.setIncorrectos(total - correctos);
+        resultado.setPuntaje(puntaje);
+        resultado.setCompletado(puntaje >= 50);
+        resultado.setTotalElementos(total);
 
         System.out.println("[TOTAL] evaluarIdentificacionPropiedad: " + (System.currentTimeMillis() - inicio) + " ms");
         System.out.println("--------------------------------------------------------\n");
@@ -322,7 +377,8 @@ public class ActividadLogica {
         System.out.println("\n--- [ActividadLogica] evaluarSimulacionEbullicion ---");
 
         JSONArray jsonArray = new JSONArray(respuestasJson);
-        int correctos = 0; int total = jsonArray.length();
+        int correctos = 0;
+        int total = jsonArray.length();
         for (int i = 0; i < total; i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
             int idPregunta = obj.getInt("idPregunta");
@@ -330,13 +386,18 @@ public class ActividadLogica {
             long t1 = System.currentTimeMillis();
             int correcta = actividadDAO.obtenerRespuestaCorrectaEbullicion(idActividad, idPregunta);
             System.out.println("[DAO→BD] obtenerRespuestaCorrectaEbullicion: " + (System.currentTimeMillis() - t1) + " ms");
-            if (seleccionada == correcta) correctos++;
+            if (seleccionada == correcta) {
+                correctos++;
+            }
         }
 
         int puntaje = total > 0 ? (correctos * 100 / total) : 0;
         EvaluacionResultado resultado = new EvaluacionResultado();
-        resultado.setCorrectos(correctos); resultado.setIncorrectos(total - correctos);
-        resultado.setPuntaje(puntaje); resultado.setCompletado(puntaje >= 50); resultado.setTotalElementos(total);
+        resultado.setCorrectos(correctos);
+        resultado.setIncorrectos(total - correctos);
+        resultado.setPuntaje(puntaje);
+        resultado.setCompletado(puntaje >= 50);
+        resultado.setTotalElementos(total);
 
         System.out.println("[TOTAL] evaluarSimulacionEbullicion: " + (System.currentTimeMillis() - inicio) + " ms");
         System.out.println("-----------------------------------------------------\n");
@@ -361,15 +422,44 @@ public class ActividadLogica {
         private boolean completado;
         private int totalElementos;
 
-        public int getCorrectos() { return correctos; }
-        public void setCorrectos(int correctos) { this.correctos = correctos; }
-        public int getIncorrectos() { return incorrectos; }
-        public void setIncorrectos(int incorrectos) { this.incorrectos = incorrectos; }
-        public int getPuntaje() { return puntaje; }
-        public void setPuntaje(int puntaje) { this.puntaje = puntaje; }
-        public boolean isCompletado() { return completado; }
-        public void setCompletado(boolean completado) { this.completado = completado; }
-        public int getTotalElementos() { return totalElementos; }
-        public void setTotalElementos(int totalElementos) { this.totalElementos = totalElementos; }
+        public int getCorrectos() {
+            return correctos;
+        }
+
+        public void setCorrectos(int correctos) {
+            this.correctos = correctos;
+        }
+
+        public int getIncorrectos() {
+            return incorrectos;
+        }
+
+        public void setIncorrectos(int incorrectos) {
+            this.incorrectos = incorrectos;
+        }
+
+        public int getPuntaje() {
+            return puntaje;
+        }
+
+        public void setPuntaje(int puntaje) {
+            this.puntaje = puntaje;
+        }
+
+        public boolean isCompletado() {
+            return completado;
+        }
+
+        public void setCompletado(boolean completado) {
+            this.completado = completado;
+        }
+
+        public int getTotalElementos() {
+            return totalElementos;
+        }
+
+        public void setTotalElementos(int totalElementos) {
+            this.totalElementos = totalElementos;
+        }
     }
 }

@@ -695,10 +695,10 @@
                 <div class="hero-texto">
                     <div class="hero-eyebrow">🍽️ Cocinas del Chef</div>
                     <h1 class="hero-titulo">Bienvenido,<br><em><%= est != null ? est.getNombreCompleto() : "Chef"%></em></h1>
-                    <p style="color:red; background:white;">
+                    <!--<p style="color:red; background:white;">
                         ID estudiante: <%= est != null ? est.getIdEstudiante() : "no hay sesión"%><br/>
                         Progresos: <%= progresos != null ? progresos.size() : "null"%>
-                    </p>
+                    </p>-->
                     <p class="hero-sub">Selecciona un escenario para continuar tu formación. Cada cocina guarda un secreto molecular 🔥</p>
                 </div>
                 <div class="hero-chef">

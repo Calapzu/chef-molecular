@@ -4,6 +4,7 @@ import com.chefmolecular.dao.ProgresoDAO;
 import com.chefmolecular.logica.ActividadLogica;
 import com.chefmolecular.logica.EscenarioLogica;
 import com.chefmolecular.logica.GamificacionLogica;
+import com.chefmolecular.logica.RankingLogica;
 import com.chefmolecular.modelo.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -65,10 +66,6 @@ public class ActividadServlet extends HttpServlet {
 
             String idxStr = request.getParameter("actividadIdx");
             int actividadIdx = (idxStr != null) ? Integer.parseInt(idxStr) : 0;
-
-            if (actividadIdx == 0) {
-                //actividadLogica.limpiarResultadosAnteriores(estudiante.getIdEstudiante(), idEscenario);
-            }
 
             if (actividadIdx >= actividades.size()) {
                 response.sendRedirect(request.getContextPath() + "/resultadoActividad.jsp?escenario=" + idEscenario);
@@ -216,13 +213,32 @@ public class ActividadServlet extends HttpServlet {
                 com.chefmolecular.dao.EstudianteDAO estudianteDAO = new com.chefmolecular.dao.EstudianteDAO();
                 request.getSession().setAttribute("estudiante", estudianteDAO.buscarPorId(estudiante.getIdEstudiante()));
 
-                request.getSession().setAttribute("mensajeExito",
-                        String.format("¡Felicitaciones! Completaste el escenario. Has ganado %d estrellas.", estrellas));
+                // ----- NUEVO: Pantalla de logros para Escenario 6 -----
+                if (idEscenario == 6) {
+                    List<Insignia> insignias = gamificacionLogica.obtenerInsigniasNuevas(estudiante.getIdEstudiante());
+                    String rangoTexto = gamificacionLogica.rangoTexto(estudiante.getRango());
+                    RankingLogica rankingLogica = new RankingLogica();
+                    int posicion = rankingLogica.obtenerPosicion(estudiante.getIdEstudiante());
 
-                System.out.println("[TOTAL] Enviar Respuesta (escenario completado): " + (System.currentTimeMillis() - inicioTotal) + " ms");
-                System.out.println("===========================================================\n");
+                    request.getSession().setAttribute("estrellasFinales", estrellas);
+                    request.getSession().setAttribute("rangoFinal", rangoTexto);
+                    request.getSession().setAttribute("insigniasNuevas", insignias);
+                    request.getSession().setAttribute("posicionRanking", posicion);
 
-                response.sendRedirect(request.getContextPath() + "/resultadoActividad.jsp?escenario=" + idEscenario);
+                    System.out.println("[TOTAL] Enviar Respuesta (escenario 6 completado → logros): " + (System.currentTimeMillis() - inicioTotal) + " ms");
+                    System.out.println("===========================================================\n");
+
+                    response.sendRedirect(request.getContextPath() + "/logrosFinales.jsp");
+                } else {
+                    // Comportamiento original para otros escenarios
+                    request.getSession().setAttribute("mensajeExito",
+                            String.format("¡Felicitaciones! Completaste el escenario. Has ganado %d estrellas.", estrellas));
+
+                    System.out.println("[TOTAL] Enviar Respuesta (escenario completado): " + (System.currentTimeMillis() - inicioTotal) + " ms");
+                    System.out.println("===========================================================\n");
+
+                    response.sendRedirect(request.getContextPath() + "/resultadoActividad.jsp?escenario=" + idEscenario);
+                }
 
             } else {
                 int siguienteIdx = actividadIdx + 1;

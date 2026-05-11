@@ -477,18 +477,14 @@ UNION ALL SELECT e.id_escenario, 'Caldos Concentrados a Presión',
 FROM escenario e WHERE e.orden = 6;
 
 -- ------------------- INSIGNIAS --------------------------------
+-- Insertar las insignias temáticas con los nombres y condiciones correctos
 INSERT INTO insignia (nombre, descripcion, icono_url, tipo_condicion, valor_condicion, id_escenario_asociado) VALUES
-('Primer Paso',       'Completa tu primer escenario.',         '/img/insignias/primer_paso.png',      'ESCENARIOS_COMPLETADOS', 1,  NULL),
-('Coleccionista',     'Desbloquea 3 recetas.',                 '/img/insignias/coleccionista.png',    'RECETAS_DESBLOQUEADAS',  3,  NULL),
-('Perfeccionista',    'Obtiene 3 estrellas en el escenario 1.','/img/insignias/perfeccionista.png',   'PERFECTO_ESCENARIO',     3,  1),
-('Sous Chef',         'Alcanza el rango Sous Chef.',           '/img/insignias/sous_chef.png',        'RANGO',                  2,  NULL),
-('Chef Estrella',     'Acumula 15 estrellas en total.',        '/img/insignias/chef_estrella.png',    'ESTRELLAS_TOTALES',      15, NULL),
-('Explorador',        'Completa 3 escenarios.',                '/img/insignias/explorador.png',       'ESCENARIOS_COMPLETADOS', 3,  NULL),
-('Maestro Molecular', 'Completa todos los escenarios.',        '/img/insignias/maestro.png',          'ESCENARIOS_COMPLETADOS', 5,  NULL),
-('Perfecto 2',        'Obtiene 3 estrellas en el escenario 2.','/img/insignias/perfecto2.png',        'PERFECTO_ESCENARIO',     3,  2),
-('Perfecto 3',        'Obtiene 3 estrellas en el escenario 3.','/img/insignias/perfecto3.png',        'PERFECTO_ESCENARIO',     3,  3),
-('Perfecto 4',        'Obtiene 3 estrellas en el escenario 4.','/img/insignias/perfecto4.png',        'PERFECTO_ESCENARIO',     3,  4),
-('Perfecto 5',        'Obtiene 3 estrellas en el escenario 5.','/img/insignias/perfecto5.png',        'PERFECTO_ESCENARIO',     3,  5);
+('Maestro London',        'Obtiene 3 estrellas en La Cocina Fría.',         '/img/insignias/maestro_london.png',        'PERFECTO_ESCENARIO', 3, 1),
+('Rey Dipolar',           'Obtiene 3 estrellas en La Sala de Salsas.',     '/img/insignias/rey_dipolar.png',           'PERFECTO_ESCENARIO', 3, 2),
+('Arquitecto de Puentes', 'Obtiene 3 estrellas en El Taller del Merengue.', '/img/insignias/arquitecto_puentes.png',    'PERFECTO_ESCENARIO', 3, 3),
+('Alquimista de Estados', 'Obtiene 3 estrellas en El Horno y el Congelador.', '/img/insignias/alquimista_estados.png',   'PERFECTO_ESCENARIO', 3, 4),
+('Barman Molecular',      'Obtiene 3 estrellas en El Bar Molecular.',      '/img/insignias/barman_molecular.png',      'PERFECTO_ESCENARIO', 3, 5),
+('Chef Estrella', 'Completa todos los escenarios con 3 estrellas.', '/img/insignias/chef_estrella.png', 'ESTRELLAS_TOTALES', 18, NULL);
 
 -- ------------------------------------------------------------
 -- DATOS PARA ESCENARIO 1 (Drag & Drop)

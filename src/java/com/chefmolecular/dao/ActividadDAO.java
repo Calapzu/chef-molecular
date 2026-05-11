@@ -232,10 +232,10 @@ public class ActividadDAO {
     public void limpiarResultadosAnteriores(int idEstudiante, int idEscenario) throws SQLException {
         long inicio = System.currentTimeMillis();
         String sql = "DELETE FROM resultado_actividad "
-                   + "WHERE id_estudiante = ? "
-                   + "AND id_actividad IN ("
-                   + "    SELECT id_actividad FROM actividad_interactiva WHERE id_escenario = ?"
-                   + ")";
+                + "WHERE id_estudiante = ? "
+                + "AND id_actividad IN ("
+                + "    SELECT id_actividad FROM actividad_interactiva WHERE id_escenario = ?"
+                + ")";
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idEstudiante);
             ps.setInt(2, idEscenario);
@@ -467,7 +467,26 @@ public class ActividadDAO {
         r.setPuntajeObtenido(rs.getInt("puntaje_obtenido"));
         r.setCompletado(rs.getBoolean("completado"));
         Timestamp ts = rs.getTimestamp("creado_en");
-        if (ts != null) r.setCreadoEn(ts.toLocalDateTime());
+        if (ts != null) {
+            r.setCreadoEn(ts.toLocalDateTime());
+        }
         return r;
+    }
+
+    public int sumarAciertosEscenario(int idEstudiante, int idEscenario) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(ra.correctos), 0) "
+                + "FROM resultado_actividad ra "
+                + "JOIN actividad_interactiva ai ON ra.id_actividad = ai.id_actividad "
+                + "WHERE ra.id_estudiante = ? AND ai.id_escenario = ?";
+        try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, idEstudiante);
+            ps.setInt(2, idEscenario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
     }
 }
