@@ -7,7 +7,7 @@ import java.io.IOException;
 
 @WebFilter(urlPatterns = {
     "/menu", "/perfil", "/escenario", "/quiz",
-    "/resultado", "/ranking", "/libroRecetas"
+    "/resultado", "/ranking", "/libroRecetas","/actividad"
 })
 public class SesionFilter implements Filter {
 
