@@ -869,7 +869,6 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 3 — QUIZ -->
             <!-- SECCIÓN 3 — ACTIVIDAD INTERACTIVA -->
             <div class="sec-head">
                 <div class="sec-num">3</div>

@@ -169,7 +169,7 @@ public class ActividadLogica {
     public void limpiarResultadosAnteriores(int idEstudiante, int idEscenario) throws SQLException {
         long inicio = System.currentTimeMillis();
         System.out.println("\n--- [ActividadLogica] limpiarResultadosAnteriores ---");
-        //actividadDAO.limpiarResultadosAnteriores(idEstudiante, idEscenario);
+        actividadDAO.limpiarResultadosAnteriores(idEstudiante, idEscenario);
         System.out.println("[DAO→BD] limpiarResultadosAnteriores: " + (System.currentTimeMillis() - inicio) + " ms");
         System.out.println("-----------------------------------------------------\n");
     }

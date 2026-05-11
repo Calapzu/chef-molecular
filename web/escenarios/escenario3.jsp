@@ -685,7 +685,7 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 3: QUIZ -->
+            <!-- SECCIÓN 3: ACTIVIDAD INTERACTIVA -->
             <div class="sec-head">
                 <div class="sec-num">3</div>
                 <span class="sec-titulo">📝 Pon a prueba tu merengue molecular</span>

@@ -790,10 +790,10 @@
                 </div>
             </div>
 
-            <!-- Sección 3: Quiz -->
+            <!-- SECCIÓN 3: ACTIVIDAD INTERACTIVA -->
             <div class="sec-head">
                 <div class="sec-num">3</div>
-                <span class="sec-titulo">📝 Evaluación — Cambios de estado</span>
+                <span class="sec-titulo">🎮 Actividad de Cambios de estado</span>
                 <div class="sec-linea"></div>
             </div>
             <div class="sec-bloque">

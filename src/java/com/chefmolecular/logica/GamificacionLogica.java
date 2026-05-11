@@ -11,10 +11,10 @@ import java.util.List;
 
 public class GamificacionLogica {
 
-    private final InsigniaDAO   insigniaDAO   = new InsigniaDAO();
-    private final ProgresoDAO   progresoDAO   = new ProgresoDAO();
+    private final InsigniaDAO insigniaDAO = new InsigniaDAO();
+    private final ProgresoDAO progresoDAO = new ProgresoDAO();
     private final EstudianteDAO estudianteDAO = new EstudianteDAO();
-    private final RecetaDAO     recetaDAO     = new RecetaDAO();
+    private final RecetaDAO recetaDAO = new RecetaDAO();
 
     public void procesarLogros(int idEstudiante, int idEscenario) throws SQLException {
         long inicioTotal = System.currentTimeMillis();
@@ -67,25 +67,38 @@ public class GamificacionLogica {
     }
 
     public String rangoTexto(String rango) {
-        if (rango == null) return "Aprendiz";
+        if (rango == null) {
+            return "Aprendiz";
+        }
         return switch (rango) {
-            case "APRENDIZ"                -> "Aprendiz";
-            case "SOUS_CHEF"               -> "Sous Chef";
-            case "CHEF"                    -> "Chef";
-            case "CHEF_MOLECULAR_ESTRELLA" -> "Chef Molecular Estrella";
-            default                        -> rango;
+            case "APRENDIZ" ->
+                "Aprendiz";
+            case "SOUS_CHEF" ->
+                "Sous Chef";
+            case "CHEF" ->
+                "Chef";
+            case "CHEF_MOLECULAR_ESTRELLA" ->
+                "Chef Molecular Estrella";
+            default ->
+                rango;
         };
     }
 
     public String calcularRango(int totalEstrellas) {
-        if (totalEstrellas >= 12) return "CHEF_MOLECULAR_ESTRELLA";
-        if (totalEstrellas >= 9)  return "CHEF";
-        if (totalEstrellas >= 3)  return "SOUS_CHEF";
+        if (totalEstrellas >= 16) {
+            return "CHEF_MOLECULAR_ESTRELLA";
+        }
+        if (totalEstrellas >= 11) {
+            return "CHEF";
+        }
+        if (totalEstrellas >= 6) {
+            return "SOUS_CHEF";
+        }
         return "APRENDIZ";
     }
 
     private boolean cumpleCondicion(Insignia insignia, int idEstudiante,
-                                    int idEscenario, int totalEstrellas) throws SQLException {
+            int idEscenario, int totalEstrellas) throws SQLException {
         return switch (insignia.getTipoCondicion()) {
 
             case "ESTRELLAS_TOTALES" ->
@@ -114,23 +127,30 @@ public class GamificacionLogica {
             }
 
             case "PERFECTO_ESCENARIO" -> {
-                if (insignia.getIdEscenarioAsociado() != idEscenario) yield false;
+                if (insignia.getIdEscenarioAsociado() != idEscenario) {
+                    yield false;
+                }
                 long t = System.currentTimeMillis();
                 ProgresoEscenario p = progresoDAO.buscar(idEstudiante, idEscenario);
                 System.out.println("[DAO→BD] buscarProgresoParaInsignia: " + (System.currentTimeMillis() - t) + " ms");
                 yield p != null && p.getEstrellas() >= insignia.getValorCondicion();
             }
 
-            default -> false;
+            default ->
+                false;
         };
     }
 
     private int rangoANumero(String rango) {
         return switch (rango) {
-            case "SOUS_CHEF"               -> 2;
-            case "CHEF"                    -> 3;
-            case "CHEF_MOLECULAR_ESTRELLA" -> 4;
-            default                        -> 1;
+            case "SOUS_CHEF" ->
+                2;
+            case "CHEF" ->
+                3;
+            case "CHEF_MOLECULAR_ESTRELLA" ->
+                4;
+            default ->
+                1;
         };
     }
 }

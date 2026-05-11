@@ -847,10 +847,10 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 3: Quiz -->
+            <!-- SECCIÓN 3 — ACTIVIDAD INTERACTIVA -->
             <div class="sec-head">
                 <div class="sec-num">3</div>
-                <span class="sec-titulo">📝 Pon a prueba tu conocimiento</span>
+                <span class="sec-titulo">🎮 Actividad de Bar molecular</span>
                 <div class="sec-linea"></div>
             </div>
             <div class="sec-bloque">

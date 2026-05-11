@@ -71,6 +71,9 @@ public class ActividadServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/resultadoActividad.jsp?escenario=" + idEscenario);
                 return;
             }
+            if (actividadIdx == 0) {
+                actividadLogica.limpiarResultadosAnteriores(estudiante.getIdEstudiante(), idEscenario);
+            }
 
             ActividadInteractiva actividadActual = actividades.get(actividadIdx);
 

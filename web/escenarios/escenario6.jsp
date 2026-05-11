@@ -680,10 +680,10 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 3: Quiz integrador -->
+            <!-- SECCIÓN 3 — ACTIVIDAD INTERACTIVA -->
             <div class="sec-head">
                 <div class="sec-num">3</div>
-                <span class="sec-titulo">📝 Evaluación final</span>
+                <span class="sec-titulo">🎮 Actividad de Olla a presión</span>
                 <div class="sec-linea"></div>
             </div>
             <div class="sec-bloque">
