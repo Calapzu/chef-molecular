@@ -319,6 +319,18 @@
                 border-radius: 5px;
                 background: var(--panel-color);
             }
+            /* SCROLL NAV */
+            .scroll-nav {
+                display: flex; justify-content: center; gap: 16px;
+                padding: 10px 16px; background: var(--panel-color);
+                border-bottom: 1px solid var(--borde-color);
+                position: sticky; top: 64px; z-index: 90;
+                backdrop-filter: blur(8px); flex-wrap: wrap;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+            .scroll-link { font-size: 13px; font-weight: 500; color: var(--texto2-color); text-decoration: none; padding: 6px 14px; border-radius: 20px; transition: all var(--transicion); }
+            .scroll-link:hover, .scroll-link.activo { color: var(--acento2-color); background: var(--escarcha-color); }
+
 
             /* ═══ CONTENIDO PRINCIPAL — secciones tipo escenario1 ═══ */
             .contenido {
@@ -663,9 +675,15 @@
             </div>
         </div>
 
+        <div class="scroll-nav">
+            <a href="#seccion-anim" class="scroll-link" data-target="seccion-anim">🍯 Fuerzas</a>
+            <a href="#seccion-exp" class="scroll-link" data-target="seccion-exp">🧂 Actividad</a>
+            <a href="#seccion-act" class="scroll-link" data-target="seccion-act">🎮 Quiz</a>
+        </div>
+
         <div class="contenido">
             <!-- SECCIÓN 1: ANIMACIÓN DE GOTAS (original del escenario2) -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-anim">
                 <div class="sec-num">1</div>
                 <span class="sec-titulo">🍯 Emulsionando — fuerzas dipolo-dipolo en acción</span>
                 <div class="sec-linea"></div>
@@ -688,7 +706,7 @@
             </div>
 
             <!-- SECCIÓN 2: ACTIVIDAD DRAG & DROP (original del escenario2) -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-exp">
                 <div class="sec-num">2</div>
                 <span class="sec-titulo">🧂 Alinea los frascos — dipolos positivos y negativos</span>
                 <div class="sec-linea"></div>
@@ -743,7 +761,7 @@
             </div>
 
             <!-- SECCIÓN 3: ACTIVIDAD INTERACTIVA -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-act">
                 <div class="sec-num">3</div>
                 <span class="sec-titulo">🎮 Actividad Interactiva — Pon en práctica lo aprendido</span>
                 <div class="sec-linea"></div>

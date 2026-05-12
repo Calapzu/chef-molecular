@@ -15,8 +15,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
         <style>
             /* ============================================
-               ESTILOS ORIGINALES DEL ESCENARIO 5 (BAR MOLECULAR)
-               Solo se reorganiza la estructura HTML
+               ESTILOS BASE (mantenidos y mejorados)
             ============================================ */
             * {
                 margin: 0;
@@ -24,34 +23,42 @@
                 box-sizing: border-box;
             }
 
+            :root {
+                --neon-pink: #F64B8A;
+                --neon-gold: #FFB347;
+                --bg-dark: #0A0A0F;
+                --texto: #F5F5F5;
+                --texto2: #C0C7D0;
+                --focus-ring: 0 0 0 3px rgba(246,75,138,0.5);
+            }
+
             body {
                 font-family: 'DM Sans', sans-serif;
-                background: #0A0A0F;
-                color: #F5F5F5;
+                background: var(--bg-dark);
+                color: var(--texto);
                 min-height: 100vh;
                 background-image: radial-gradient(circle at 10% 20%, rgba(255,70,120,0.08) 2%, transparent 2.5%),
                     radial-gradient(circle at 90% 80%, rgba(255,180,70,0.06) 1.5%, transparent 2%);
                 background-size: 40px 40px, 35px 35px;
             }
 
-            /* Barra lateral decorativa (similar a escenario1, pero con neón) */
+            /* Elementos decorativos fijos (ocultables en móvil) */
             .sidebar-neon {
                 position: fixed;
                 left: 0;
                 top: 0;
                 width: 3px;
                 height: 100%;
-                background: linear-gradient(to bottom, transparent, #F64B8A, #FFB347, #F64B8A, transparent);
+                background: linear-gradient(to bottom, transparent, var(--neon-pink), var(--neon-gold), var(--neon-pink), transparent);
                 opacity: 0.8;
                 pointer-events: none;
                 z-index: 10;
             }
 
-            /* ========== NAVBAR (estructura escenario1, colores de bar) ========== */
             .navbar {
                 background: #11111A;
                 backdrop-filter: blur(10px);
-                border-bottom: 2px solid #F64B8A;
+                border-bottom: 2px solid var(--neon-pink);
                 padding: 0 40px;
                 display: flex;
                 align-items: center;
@@ -77,20 +84,23 @@
                 align-items: center;
                 gap: 7px;
                 text-decoration: none;
-                font-size: 12px;
+                font-size: 0.8rem;
                 background: rgba(246,75,138,0.2);
                 padding: 6px 12px;
                 border-radius: 40px;
-                color: #F64B8A;
-                border: 1px solid #F64B8A;
+                color: var(--neon-pink);
+                border: 1px solid var(--neon-pink);
                 transition: all 0.2s;
                 letter-spacing: 0.3px;
             }
-            .nav-back:hover {
-                background: #F64B8A;
-                color: #0A0A0F;
+            .nav-back:hover, .nav-back:focus-visible {
+                background: var(--neon-pink);
+                color: var(--bg-dark);
                 transform: translateY(-1px);
+                outline: none;
+                box-shadow: var(--focus-ring);
             }
+
             .sep {
                 width: 1px;
                 height: 24px;
@@ -103,26 +113,39 @@
                 flex-wrap: wrap;
             }
             .nav-badge {
-                font-size: 9px;
+                font-size: 0.75rem;
                 letter-spacing: 3px;
                 text-transform: uppercase;
-                color: #FFB347;
+                color: var(--neon-gold);
                 font-weight: 500;
             }
             .nav-nombre {
                 font-family: 'Playfair Display', serif;
                 font-size: 1rem;
                 font-weight: 700;
-                background: linear-gradient(135deg, #F64B8A, #FFB347);
+                color: var(--neon-gold); /* fallback */
+                background: linear-gradient(135deg, var(--neon-pink), var(--neon-gold));
                 -webkit-background-clip: text;
                 background-clip: text;
-                color: transparent;
+                -webkit-text-fill-color: transparent;
             }
             .navbar-der {
                 display: flex;
                 align-items: center;
                 gap: 10px;
             }
+            /* SCROLL NAV */
+            .scroll-nav {
+                display: flex; justify-content: center; gap: 16px;
+                padding: 10px 16px; background: var(--panel-color);
+                border-bottom: 1px solid var(--borde-color);
+                position: sticky; top: 64px; z-index: 90;
+                backdrop-filter: blur(8px); flex-wrap: wrap;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+            .scroll-link { font-size: 13px; font-weight: 500; color: var(--texto2-color); text-decoration: none; padding: 6px 14px; border-radius: 20px; transition: all var(--transicion); }
+            .scroll-link:hover, .scroll-link.activo { color: var(--acento2-color); background: var(--escarcha-color); }
+
             .chip-completado {
                 display: flex;
                 align-items: center;
@@ -131,32 +154,32 @@
                 border-radius: 100px;
                 background: rgba(246,75,138,0.2);
                 border: 1px solid rgba(246,75,138,0.5);
-                font-size: 11px;
-                color: #F64B8A;
+                font-size: 0.75rem;
+                color: var(--neon-pink);
             }
             .estrellas-nav {
                 display: flex;
                 gap: 3px;
             }
             .est {
-                width: 9px;
-                height: 9px;
+                width: 10px;
+                height: 10px;
                 clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
             }
-            .est.on  {
-                background: #F64B8A;
+            .est.on {
+                background: var(--neon-pink);
             }
             .est.off {
                 background: rgba(246,75,138,0.3);
             }
             .nav-temp {
                 font-family: 'Playfair Display', serif;
-                font-size: 0.85rem;
+                font-size: 0.9rem;
                 font-style: italic;
-                color: #FFB347;
+                color: var(--neon-gold);
             }
 
-            /* ========== HERO (termómetro y pasos) adaptado a Bar ========== */
+            /* Hero */
             .hero {
                 position: relative;
                 padding: 60px 40px 52px;
@@ -184,10 +207,10 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                font-size: 10px;
+                font-size: 0.75rem;
                 letter-spacing: 4px;
                 text-transform: uppercase;
-                color: #F64B8A;
+                color: var(--neon-pink);
                 font-weight: 500;
                 margin-bottom: 14px;
             }
@@ -195,16 +218,17 @@
                 content: '';
                 width: 24px;
                 height: 1px;
-                background: #FFB347;
+                background: var(--neon-gold);
             }
             .hero-titulo {
                 font-family: 'Playfair Display', serif;
                 font-size: 2.8rem;
                 font-weight: 700;
-                background: linear-gradient(135deg, #F64B8A, #FFB347);
+                color: var(--neon-gold);
+                background: linear-gradient(135deg, var(--neon-pink), var(--neon-gold));
                 -webkit-background-clip: text;
                 background-clip: text;
-                color: transparent;
+                -webkit-text-fill-color: transparent;
                 line-height: 1.05;
                 margin-bottom: 6px;
                 text-shadow: 0 0 20px rgba(246,75,138,0.3);
@@ -216,13 +240,13 @@
                 font-family: 'Playfair Display', serif;
                 font-size: 1rem;
                 font-style: italic;
-                color: #FFB347;
+                color: var(--neon-gold);
                 opacity: 0.9;
                 margin-bottom: 16px;
             }
             .hero-desc {
-                font-size: 13px;
-                color: #B0B7C3;
+                font-size: 0.85rem;
+                color: var(--texto2);
                 font-weight: 300;
                 line-height: 1.7;
             }
@@ -243,10 +267,11 @@
                 font-family: 'Playfair Display', serif;
                 font-size: 3rem;
                 font-weight: 700;
-                background: linear-gradient(135deg, #F64B8A, #FFB347);
+                color: var(--neon-gold);
+                background: linear-gradient(135deg, var(--neon-pink), var(--neon-gold));
                 -webkit-background-clip: text;
                 background-clip: text;
-                color: transparent;
+                -webkit-text-fill-color: transparent;
             }
             .temp-barra-wrap {
                 width: 6px;
@@ -261,7 +286,7 @@
                 bottom: 0;
                 width: 100%;
                 height: 70%;
-                background: linear-gradient(to top, #F64B8A, #FFB347);
+                background: linear-gradient(to top, var(--neon-pink), var(--neon-gold));
                 border-radius: 3px;
                 animation: subirCoctel 4s ease-in-out infinite alternate;
             }
@@ -270,7 +295,7 @@
                     height: 30%;
                     opacity: 0.7;
                 }
-                to   {
+                to {
                     height: 80%;
                     opacity: 1;
                 }
@@ -289,9 +314,10 @@
                 border-radius: 5px;
                 background: rgba(0,0,0,0.3);
                 backdrop-filter: blur(4px);
+                font-size: 0.85rem;
             }
 
-            /* ========== CONTENIDO PRINCIPAL (secciones estilo escenario1) ========== */
+            /* Contenido principal */
             .contenido {
                 max-width: 1200px;
                 margin: 0 auto;
@@ -307,23 +333,23 @@
                 flex-wrap: wrap;
             }
             .sec-num {
-                width: 24px;
-                height: 24px;
+                width: 26px;
+                height: 26px;
                 border-radius: 50%;
-                border: 1px solid #F64B8A;
+                border: 1px solid var(--neon-pink);
                 background: rgba(246,75,138,0.2);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 10px;
-                color: #FFB347;
+                font-size: 0.75rem;
+                color: var(--neon-gold);
                 flex-shrink: 0;
             }
             .sec-titulo {
                 font-family: 'Playfair Display', serif;
-                font-size: 1.05rem;
+                font-size: 1.1rem;
                 font-weight: 700;
-                color: #F5F5F5;
+                color: var(--texto);
             }
             .sec-linea {
                 flex: 1;
@@ -335,7 +361,7 @@
                 backdrop-filter: blur(8px);
                 border: 1px solid rgba(246,75,138,0.3);
                 border-radius: 8px;
-                overflow: hidden;
+                overflow: visible;
                 margin-bottom: 44px;
                 position: relative;
                 box-shadow: 0 8px 24px rgba(0,0,0,0.3);
@@ -347,16 +373,16 @@
                 top: 0;
                 bottom: 0;
                 width: 2px;
-                background: linear-gradient(to bottom, transparent, #F64B8A 40%, #FFB347 60%, transparent);
+                background: linear-gradient(to bottom, transparent, var(--neon-pink) 40%, var(--neon-gold) 60%, transparent);
                 opacity: 0.8;
+                border-radius: 2px;
             }
 
-            /* ========== CONTENIDO ORIGINAL DEL ESCENARIO 5 (sin cambios) ========== */
+            /* Tarjetas técnicas */
             .tecnicas-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
                 gap: 28px;
-                margin-bottom: 0;
                 padding: 20px;
             }
             .tecnica-card {
@@ -383,13 +409,13 @@
             }
             .tecnica-card:hover {
                 transform: translateY(-8px);
-                border-color: #F64B8A;
+                border-color: var(--neon-pink);
                 box-shadow: 0 15px 30px rgba(246,75,138,0.2);
             }
             .tecnica-card h3 {
-                font-size: 1.4rem;
+                font-size: 1.3rem;
                 margin-bottom: 12px;
-                color: #FFB347;
+                color: var(--neon-gold);
             }
             .canvas-mol {
                 background: #0D0D14;
@@ -403,10 +429,11 @@
             }
             .tecnica-card p {
                 font-size: 0.85rem;
-                color: #C0C7D0;
+                color: var(--texto2);
                 line-height: 1.4;
             }
 
+            /* Drag & Drop */
             .drag-section {
                 background: rgba(20, 15, 18, 0.92);
                 backdrop-filter: blur(8px);
@@ -418,22 +445,22 @@
                 background-image: repeating-linear-gradient(45deg, rgba(255,180,70,0.03) 0px, rgba(255,180,70,0.03) 2px, transparent 2px, transparent 8px);
             }
             .drag-section h2 {
-                font-size: 1.6rem;
+                font-size: 1.5rem;
                 display: flex;
                 align-items: center;
                 gap: 12px;
                 margin-bottom: 6px;
-                color: #FFB347;
+                color: var(--neon-gold);
             }
             .drag-section h2:before {
                 content: "🍸";
                 font-size: 2rem;
             }
             .sub {
-                color: #B0B7C3;
+                color: var(--texto2);
                 font-size: 0.85rem;
                 margin-bottom: 24px;
-                border-left: 3px solid #F64B8A;
+                border-left: 3px solid var(--neon-pink);
                 padding-left: 12px;
             }
 
@@ -456,17 +483,31 @@
                 cursor: grab;
                 user-select: none;
                 transition: all 0.2s;
-                border-left: 4px solid #F64B8A;
+                border-left: 4px solid var(--neon-pink);
                 color: #F0F0F0;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .ingrediente::before {
+                content: "✋";
+                font-size: 0.8rem;
+                opacity: 0.7;
             }
             .ingrediente:active {
                 cursor: grabbing;
-                opacity: 0.7;
             }
-            .ingrediente:hover {
+            .ingrediente:hover, .ingrediente:focus-visible {
                 transform: scale(1.02);
                 background: #3A3A4A;
+                outline: none;
+                box-shadow: var(--focus-ring);
+            }
+            .ingrediente[aria-selected="true"] {
+                box-shadow: 0 0 0 3px var(--neon-gold);
+                border-left-color: var(--neon-gold);
             }
 
             .zonas-tech {
@@ -486,27 +527,34 @@
                 text-align: center;
                 position: relative;
             }
+            .zona:focus-within {
+                border-color: var(--neon-pink);
+            }
             .zona h3 {
-                font-size: 1rem;
-                margin-bottom: 16px;
+                font-size: 0.9rem;
+                margin-bottom: 12px;
                 padding-bottom: 6px;
                 border-bottom: 1px solid rgba(255,180,70,0.4);
                 display: inline-block;
             }
             .zona.esferificacion h3 {
-                color: #F64B8A;
+                color: var(--neon-pink);
             }
             .zona.emulsion h3 {
-                color: #FFB347;
+                color: var(--neon-gold);
             }
             .zona.gelificacion h3 {
                 color: #4BC0C0;
             }
             .zona[dragover="true"] {
                 box-shadow: 0 0 18px rgba(246,75,138,0.6), inset 0 0 8px rgba(255,180,70,0.3);
-                border-color: #F64B8A;
+                border-color: var(--neon-pink);
             }
-
+            .contador-zona {
+                font-size: 0.7rem;
+                color: var(--texto2);
+                margin: 4px 0 8px;
+            }
             .coctel-glass {
                 position: relative;
                 width: 70px;
@@ -523,7 +571,7 @@
                 position: absolute;
                 bottom: 0;
                 width: 100%;
-                background: linear-gradient(180deg, #F64B8A, #FFB347);
+                background: linear-gradient(180deg, var(--neon-pink), var(--neon-gold));
                 transition: height 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             }
             .glass-overlay {
@@ -534,22 +582,30 @@
                 mix-blend-mode: overlay;
                 pointer-events: none;
             }
+            .dropzone-inner {
+                min-height: 30px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: center;
+                align-items: center;
+                padding: 8px 4px;
+            }
             .ingrediente.correcto {
                 background: linear-gradient(135deg, #1E5631, #2A7A3A);
                 border-left-color: #4ADE80;
-                opacity: 0.9;
             }
             .ingrediente.incorrecto {
                 background: linear-gradient(135deg, #7A2E3A, #5A1E2A);
-                border-left-color: #F64B8A;
+                border-left-color: var(--neon-pink);
                 text-decoration: line-through;
-                opacity: 0.7;
             }
             .btns {
                 display: flex;
                 gap: 16px;
                 margin-top: 20px;
                 justify-content: center;
+                flex-wrap: wrap;
             }
             .btn {
                 padding: 10px 28px;
@@ -560,9 +616,13 @@
                 font-size: 0.85rem;
                 transition: 0.2s;
             }
+            .btn:focus-visible {
+                outline: none;
+                box-shadow: var(--focus-ring);
+            }
             .btn-pink {
-                background: #F64B8A;
-                color: #0A0A0F;
+                background: var(--neon-pink);
+                color: var(--bg-dark);
                 box-shadow: 0 2px 8px rgba(246,75,138,0.4);
             }
             .btn-pink:hover {
@@ -571,12 +631,14 @@
             }
             .btn-outline {
                 background: transparent;
-                border: 1px solid #F64B8A;
-                color: #F64B8A;
+                border: 1px solid var(--neon-pink);
+                color: var(--neon-pink);
             }
             .btn-outline:hover {
                 background: rgba(246,75,138,0.2);
+                transform: translateY(-2px);
             }
+
             .feedback {
                 margin-top: 24px;
                 background: rgba(0,0,0,0.7);
@@ -585,7 +647,7 @@
                 border-radius: 40px;
                 display: none;
                 text-align: center;
-                border-left: 4px solid #FFB347;
+                border-left: 4px solid var(--neon-gold);
                 animation: surgirHumo 0.4s ease;
             }
             @keyframes surgirHumo {
@@ -601,21 +663,12 @@
                 }
             }
 
-            .quiz-block {
-                background: linear-gradient(145deg, #171722, #111118);
-                border-radius: 48px;
-                padding: 32px;
-                text-align: center;
-                border: 1px solid rgba(255,180,70,0.3);
-                margin: 20px;
-            }
-            .quiz-block h3 {
-                font-size: 1.5rem;
-                margin-bottom: 8px;
-                color: #FFB347;
+            /* Bloque quiz */
+            .quiz-wrap {
+                padding: 24px;
             }
             .btn-quiz {
-                background: #F64B8A;
+                background: var(--neon-pink);
                 color: white;
                 padding: 14px 38px;
                 border-radius: 60px;
@@ -627,12 +680,14 @@
                 box-shadow: 0 6px 14px rgba(246,75,138,0.4);
                 margin-top: 16px;
             }
-            .btn-quiz:hover {
+            .btn-quiz:hover, .btn-quiz:focus-visible {
                 background: #FF6A9F;
                 transform: scale(1.02);
+                outline: none;
+                box-shadow: var(--focus-ring);
             }
 
-            /* Decoraciones de bar (mantenidas) */
+            /* Decoraciones fijas (ocultas en móvil) */
             .bar-decor {
                 position: fixed;
                 bottom: 0;
@@ -660,7 +715,6 @@
                 opacity: 0.25;
                 filter: blur(3px);
                 transform: scaleX(-1);
-                transition: all 0.2s;
             }
             .neon-line {
                 position: fixed;
@@ -668,16 +722,19 @@
                 left: 0;
                 width: 100%;
                 height: 2px;
-                background: linear-gradient(90deg, transparent, #F64B8A, #FFB347, #F64B8A, transparent);
+                background: linear-gradient(90deg, transparent, var(--neon-pink), var(--neon-gold), var(--neon-pink), transparent);
                 z-index: 101;
+                pointer-events: none;
             }
+
             footer {
                 text-align: center;
-                font-size: 0.7rem;
+                font-size: 0.75rem;
                 color: #5A5A70;
                 margin: 40px 0 20px;
             }
 
+            /* ========== MEJORAS RESPONSIVE Y ACCESIBILIDAD ========== */
             @media (max-width: 800px) {
                 .navbar {
                     padding: 0 20px;
@@ -692,36 +749,80 @@
                     grid-template-columns: 1fr;
                 }
             }
+            @media (max-width: 600px) {
+                .sidebar-neon, .neon-line, .bar-decor, .bar-stools {
+                    display: none;
+                }
+                .hero-inner {
+                    flex-direction: column;
+                }
+                .ingredientes-pool {
+                    border-radius: 30px;
+                    padding: 16px;
+                }
+                .ingrediente {
+                    padding: 8px 16px;
+                    font-size: 0.8rem;
+                }
+                .zona {
+                    min-width: 140px;
+                }
+            }
+
+            /* Prefiere reducción de movimiento */
+            @media (prefers-reduced-motion: reduce) {
+                .temp-barra-fill {
+                    animation: none;
+                    height: 60%;
+                }
+                .canvas-mol {
+                    animation: none;
+                }
+                .feedback {
+                    animation: none;
+                }
+            }
+
+            /* Utilidad para lectores de pantalla */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0,0,0,0);
+                white-space: nowrap;
+                border: 0;
+            }
         </style>
     </head>
     <body>
-        <div class="neon-line"></div>
-        <div class="bar-decor"></div>
-        <div class="bar-stools">
-            <div class="stool">🪑</div>
-            <div class="stool">🪑</div>
-            <div class="stool">🪑</div>
+        <div class="neon-line" aria-hidden="true"></div>
+        <div class="bar-decor" aria-hidden="true"></div>
+        <div class="bar-stools" aria-hidden="true">
+            <div class="stool">🪑</div><div class="stool">🪑</div><div class="stool">🪑</div>
         </div>
-        <div class="sidebar-neon"></div>
+        <div class="sidebar-neon" aria-hidden="true"></div>
 
-        <nav class="navbar">
+        <nav class="navbar" aria-label="Navegación principal">
             <div class="navbar-izq">
                 <a href="${pageContext.request.contextPath}/menu" class="nav-back">
-                    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
                     Volver
                 </a>
-                <div class="sep"></div>
+                <div class="sep" aria-hidden="true"></div>
                 <div class="nav-escenario-info">
                     <span class="nav-badge">Escenario 05 🍸</span>
-                    <div class="sep"></div>
+                    <div class="sep" aria-hidden="true"></div>
                     <span class="nav-nombre">Bar Molecular</span>
                 </div>
             </div>
             <div class="navbar-der">
-                <span class="nav-temp">🍹 Coctelería de vanguardia</span>
+                <span class="nav-temp" aria-label="Coctelería de vanguardia">🍹 Coctelería de vanguardia</span>
                 <% if (completado) {%>
                 <div class="chip-completado">✅ Completado</div>
-                <div class="estrellas-nav">
+                <div class="estrellas-nav" aria-label="<%= estrellas%> de 3 estrellas">
                     <div class="est <%= estrellas >= 1 ? "on" : "off"%>"></div>
                     <div class="est <%= estrellas >= 2 ? "on" : "off"%>"></div>
                     <div class="est <%= estrellas >= 3 ? "on" : "off"%>"></div>
@@ -740,11 +841,11 @@
                         Descubre cómo la ciencia transforma líquidos en caviar, espumas y geles. Arrastra los ingredientes a la técnica adecuada y completa el coctel molecular.
                     </p>
                 </div>
-                <div class="hero-temp-panel">
+                <div class="hero-temp-panel" aria-hidden="true">
                     <div class="termometro">
                         <div class="temp-numero">🍸</div>
                         <div class="temp-barra-wrap"><div class="temp-barra-fill"></div></div>
-                        <div class="temp-unidad">Coctel perfecto</div>
+                        <div class="temp-unidad" style="font-size:0.8rem; color:var(--texto2);">Coctel perfecto</div>
                     </div>
                     <div class="pasos-lista">
                         <div class="paso"><span>🔮</span> Esferificación</div>
@@ -754,88 +855,108 @@
                 </div>
             </div>
         </div>
+            
+            <!-- NAVEGACIÓN STICKY (MEJORA UX) -->
+        <div class="scroll-nav">
+            <a href="#seccion-anim" class="scroll-link" data-target="seccion-anim">🔮 Fuerzas</a>
+            <a href="#seccion-exp" class="scroll-link" data-target="seccion-exp">🧪 Experimenta</a>
+            <a href="#seccion-act" class="scroll-link" data-target="seccion-act">🎮 Actividad</a>
+        </div>
 
-        <div class="contenido">
-            <!-- SECCIÓN 1: Técnicas moleculares (tarjetas) -->
-            <div class="sec-head">
-                <div class="sec-num">1</div>
-                <span class="sec-titulo">🍸 Técnicas de coctelería molecular</span>
-                <div class="sec-linea"></div>
-            </div>
-            <div class="sec-bloque">
+
+        <main class="contenido">
+            <!-- SECCIÓN 1: Técnicas moleculares -->
+            <section aria-labelledby="sec1-titulo" class="sec-bloque" id="seccion-anim">
+                <div class="sec-head">
+                    <div class="sec-num" aria-hidden="true">1</div>
+                    <span class="sec-titulo" id="sec1-titulo">🍸 Técnicas de coctelería molecular</span>
+                    <div class="sec-linea" aria-hidden="true"></div>
+                </div>
                 <div class="tecnicas-grid">
                     <div class="tecnica-card">
                         <h3>🔮 Esferificación</h3>
-                        <canvas id="canvasEsfera" width="200" height="140" class="canvas-mol"></canvas>
+                        <canvas id="canvasEsfera" width="200" height="140" class="canvas-mol" role="img" aria-label="Animación de gotas de esferificación"></canvas>
                         <p>Líquido envuelto en una membrana fina.<br>Alginato + calcio → caviar líquido para cocteles.</p>
                     </div>
                     <div class="tecnica-card">
                         <h3>🥛 Emulsión & Espumas</h3>
-                        <canvas id="canvasEmulsion" width="200" height="140" class="canvas-mol"></canvas>
+                        <canvas id="canvasEmulsion" width="200" height="140" class="canvas-mol" role="img" aria-label="Animación de burbujas de emulsión"></canvas>
                         <p>Mezcla de agua y grasa estable.<br>Lecitina de soja → espumas y aires aromáticos.</p>
                     </div>
                     <div class="tecnica-card">
                         <h3>🍮 Gelificación</h3>
-                        <canvas id="canvasGel" width="200" height="140" class="canvas-mol"></canvas>
+                        <canvas id="canvasGel" width="200" height="140" class="canvas-mol" role="img" aria-label="Animación de textura gelificada"></canvas>
                         <p>Líquido a gel termo-irreversible.<br>Agar-agar, gellan gum para texturas sólidas.</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- SECCIÓN 2: Estación de la barra (drag & drop) -->
-            <div class="sec-head">
-                <div class="sec-num">2</div>
-                <span class="sec-titulo">🍹 Clasifica los ingredientes del bar</span>
-                <div class="sec-linea"></div>
-            </div>
-            <div class="sec-bloque">
+            <section aria-labelledby="sec2-titulo" class="sec-bloque" id="seccion-exp">
+                <div class="sec-head">
+                    <div class="sec-num" aria-hidden="true">2</div>
+                    <span class="sec-titulo" id="sec2-titulo">🍹 Clasifica los ingredientes del bar</span>
+                    <div class="sec-linea" aria-hidden="true"></div>
+                </div>
                 <div class="drag-section">
-                    <h2>Clasifica los ingredientes del bar</h2>
-                    <div class="sub">Arrastra cada "botella" a la técnica molecular que la utiliza principalmente</div>
+                    <h2 id="drag-title">Clasifica los ingredientes del bar</h2>
+                    <div class="sub">Arrastra cada "botella" a la técnica molecular que la utiliza principalmente. <span class="sr-only">También puedes usar los botones táctiles: toca un ingrediente y luego toca una técnica.</span></div>
 
-                    <div class="ingredientes-pool" id="pool-mol"
+                    <div class="ingredientes-pool" id="pool-mol" role="listbox" aria-label="Ingredientes disponibles"
                          ondragover="allowDropMol(event)" ondrop="dropPoolMol(event)">
-                        <div class="ingrediente" draggable="true" id="ing1"
-                             ondragstart="dragMol(event,'ing1')" data-tech="esferificacion">🧪 Alginato de sodio</div>
-                        <div class="ingrediente" draggable="true" id="ing2"
-                             ondragstart="dragMol(event,'ing2')" data-tech="esferificacion">⚖️ Cloruro de calcio</div>
-                        <div class="ingrediente" draggable="true" id="ing3"
-                             ondragstart="dragMol(event,'ing3')" data-tech="emulsion">🥚 Lecitina de soja</div>
-                        <div class="ingrediente" draggable="true" id="ing4"
-                             ondragstart="dragMol(event,'ing4')" data-tech="emulsion">🍯 Xantana (estabilizante)</div>
-                        <div class="ingrediente" draggable="true" id="ing5"
-                             ondragstart="dragMol(event,'ing5')" data-tech="gelificacion">🌿 Agar-agar</div>
-                        <div class="ingrediente" draggable="true" id="ing6"
-                             ondragstart="dragMol(event,'ing6')" data-tech="gelificacion">🍮 Goma gelana</div>
+                        <div class="ingrediente" draggable="true" id="ing1" role="option" tabindex="0" aria-grabbed="false"
+                             ondragstart="dragMol(event,'ing1')" data-tech="esferificacion"
+                             onclick="seleccionarIngrediente('ing1')" onkeydown="handleKeyIng(event, 'ing1')">🧪 Alginato de sodio</div>
+                        <div class="ingrediente" draggable="true" id="ing2" role="option" tabindex="0" aria-grabbed="false"
+                             ondragstart="dragMol(event,'ing2')" data-tech="esferificacion"
+                             onclick="seleccionarIngrediente('ing2')" onkeydown="handleKeyIng(event, 'ing2')">⚖️ Cloruro de calcio</div>
+                        <div class="ingrediente" draggable="true" id="ing3" role="option" tabindex="0" aria-grabbed="false"
+                             ondragstart="dragMol(event,'ing3')" data-tech="emulsion"
+                             onclick="seleccionarIngrediente('ing3')" onkeydown="handleKeyIng(event, 'ing3')">🥚 Lecitina de soja</div>
+                        <div class="ingrediente" draggable="true" id="ing4" role="option" tabindex="0" aria-grabbed="false"
+                             ondragstart="dragMol(event,'ing4')" data-tech="emulsion"
+                             onclick="seleccionarIngrediente('ing4')" onkeydown="handleKeyIng(event, 'ing4')">🍯 Xantana (estabilizante)</div>
+                        <div class="ingrediente" draggable="true" id="ing5" role="option" tabindex="0" aria-grabbed="false"
+                             ondragstart="dragMol(event,'ing5')" data-tech="gelificacion"
+                             onclick="seleccionarIngrediente('ing5')" onkeydown="handleKeyIng(event, 'ing5')">🌿 Agar-agar</div>
+                        <div class="ingrediente" draggable="true" id="ing6" role="option" tabindex="0" aria-grabbed="false"
+                             ondragstart="dragMol(event,'ing6')" data-tech="gelificacion"
+                             onclick="seleccionarIngrediente('ing6')" onkeydown="handleKeyIng(event, 'ing6')">🍮 Goma gelana</div>
                     </div>
 
                     <div class="zonas-tech">
-                        <div class="zona esferificacion" id="zona-esferificacion"
-                             ondragover="allowDropMol(event)" ondrop="dropMol(event, 'esferificacion')">
+                        <div class="zona esferificacion" id="zona-esferificacion" role="region" aria-label="Zona de esferificación"
+                             ondragover="allowDropMol(event)" ondrop="dropMol(event, 'esferificacion')"
+                             tabindex="0" onclick="moverSeleccionadoA('esferificacion')">
                             <h3>🔮 ESFERIFICACIÓN</h3>
-                            <div class="coctel-glass">
+                            <div class="contador-zona" id="cont-esferificacion">0/2 ingredientes</div>
+                            <div class="coctel-glass" aria-hidden="true">
                                 <div id="liquid-esferificacion" class="liquid" style="height: 0%;"></div>
                                 <div class="glass-overlay">🍸</div>
                             </div>
-                            <div class="dropzone-inner"></div>
+                            <div class="dropzone-inner" id="inner-esferificacion"></div>
                         </div>
-                        <div class="zona emulsion" id="zona-emulsion"
-                             ondragover="allowDropMol(event)" ondrop="dropMol(event, 'emulsion')">
+                        <div class="zona emulsion" id="zona-emulsion" role="region" aria-label="Zona de emulsión"
+                             ondragover="allowDropMol(event)" ondrop="dropMol(event, 'emulsion')"
+                             tabindex="0" onclick="moverSeleccionadoA('emulsion')">
                             <h3>🥛 EMULSIÓN / ESPUMAS</h3>
-                            <div class="coctel-glass">
+                            <div class="contador-zona" id="cont-emulsion">0/2 ingredientes</div>
+                            <div class="coctel-glass" aria-hidden="true">
                                 <div id="liquid-emulsion" class="liquid" style="height: 0%;"></div>
                                 <div class="glass-overlay">🍸</div>
                             </div>
-                            <div class="dropzone-inner"></div>
+                            <div class="dropzone-inner" id="inner-emulsion"></div>
                         </div>
-                        <div class="zona gelificacion" id="zona-gelificacion"
-                             ondragover="allowDropMol(event)" ondrop="dropMol(event, 'gelificacion')">
+                        <div class="zona gelificacion" id="zona-gelificacion" role="region" aria-label="Zona de gelificación"
+                             ondragover="allowDropMol(event)" ondrop="dropMol(event, 'gelificacion')"
+                             tabindex="0" onclick="moverSeleccionadoA('gelificacion')">
                             <h3>🍮 GELIFICACIÓN</h3>
-                            <div class="coctel-glass">
+                            <div class="contador-zona" id="cont-gelificacion">0/2 ingredientes</div>
+                            <div class="coctel-glass" aria-hidden="true">
                                 <div id="liquid-gelificacion" class="liquid" style="height: 0%;"></div>
                                 <div class="glass-overlay">🍸</div>
                             </div>
-                            <div class="dropzone-inner"></div>
+                            <div class="dropzone-inner" id="inner-gelificacion"></div>
                         </div>
                     </div>
 
@@ -843,21 +964,21 @@
                         <button class="btn btn-pink" onclick="verificarClasificacion()">✔ Verificar coctel</button>
                         <button class="btn btn-outline" onclick="reiniciarClasificacion()">↺ Reiniciar barra</button>
                     </div>
-                    <div id="feedback-mol" class="feedback"></div>
+                    <div id="feedback-mol" class="feedback" role="status" aria-live="polite"></div>
                 </div>
-            </div>
+            </section>
 
-            <!-- SECCIÓN 3 — ACTIVIDAD INTERACTIVA -->
-            <div class="sec-head">
-                <div class="sec-num">3</div>
-                <span class="sec-titulo">🎮 Actividad de Bar molecular</span>
-                <div class="sec-linea"></div>
-            </div>
-            <div class="sec-bloque">
+            <!-- SECCIÓN 3 -->
+            <section aria-labelledby="sec3-titulo" class="sec-bloque">
+                <div class="sec-head" id="seccion-act">
+                    <div class="sec-num" aria-hidden="true">3</div>
+                    <span class="sec-titulo" id="sec3-titulo">🎮 Actividad de Bar molecular</span>
+                    <div class="sec-linea" aria-hidden="true"></div>
+                </div>
                 <div class="quiz-wrap">
                     <div>
                         <div class="quiz-titulo" style="font-family:'Playfair Display',serif; font-size:1.1rem;">🧪 Clasifica las moléculas polares y no polares</div>
-                        <p class="quiz-desc" style="font-size:12px; color: var(--texto2-color);">
+                        <p style="font-size:0.85rem; color: var(--texto2);">
                             <% if (completado) { %>
                             ✅ ¡Ya completaste este escenario! Puedes volver a practicar para mejorar tu puntuación.
                             <% } else { %>
@@ -866,37 +987,41 @@
                         </p>
                     </div>
                     <a href="${pageContext.request.contextPath}/actividad?escenario=<%= idEscenario%>" class="btn-quiz">
-                        <% if (completado) { %>
-                        🔁 Practicar de nuevo
-                        <% } else { %>
-                        🎮 Comenzar actividad →
-                        <% }%>
+                        <% if (completado) { %> 🔁 Practicar de nuevo <% } else { %> 🎮 Comenzar actividad → <% }%>
                     </a>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
+
+        <footer>© Chef Molecular · Experiencia interactiva</footer>
 
         <script>
-            // ========== DRAG & DROP CORREGIDO ==========
-            let draggingId = null;
+            // ========== DRAG & DROP + ACCESIBILIDAD + MÓVIL ==========
 
+            // Variable para modo táctil/teclado: ingrediente actualmente seleccionado
+            let ingredienteSeleccionado = null;
+
+            // ---------- Drag convencional ----------
             function dragMol(e, id) {
-                draggingId = id;
                 e.dataTransfer.setData('text/plain', id);
+                // Limpiar selección táctil si se arrastra
+                if (ingredienteSeleccionado) {
+                    document.getElementById(ingredienteSeleccionado)?.removeAttribute('aria-selected');
+                    ingredienteSeleccionado = null;
+                }
             }
 
             function allowDropMol(e) {
                 e.preventDefault();
             }
 
-// Fix dragleave: ignorar eventos que vienen de elementos hijos
+            // Configurar zonas para drag visual y drops
             document.querySelectorAll('.zona').forEach(zone => {
                 zone.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     zone.setAttribute('dragover', 'true');
                 });
                 zone.addEventListener('dragleave', (e) => {
-                    // Solo quitar el atributo si salimos de la zona real (no de un hijo)
                     if (!zone.contains(e.relatedTarget)) {
                         zone.removeAttribute('dragover');
                     }
@@ -908,9 +1033,10 @@
                     const draggedEl = document.getElementById(dragId);
                     if (!draggedEl)
                         return;
-                    // Evitar mover el elemento si ya está en esta zona
-                    if (draggedEl.parentElement !== zone) {
-                        zone.appendChild(draggedEl);
+                    // Mover siempre a la dropzone-inner de la zona
+                    const inner = zone.querySelector('.dropzone-inner');
+                    if (inner && draggedEl.parentElement !== inner) {
+                        inner.appendChild(draggedEl);
                         draggedEl.classList.remove('correcto', 'incorrecto');
                         aplicarEfectoCoctelera(draggedEl);
                     }
@@ -918,37 +1044,122 @@
                 });
             });
 
-// Drop de vuelta al pool
-            document.getElementById('pool-mol').addEventListener('dragover', (e) => e.preventDefault());
-            document.getElementById('pool-mol').addEventListener('drop', (e) => {
+            // Pool también acepta drops (devolver ingredientes)
+            const pool = document.getElementById('pool-mol');
+            pool.addEventListener('dragover', (e) => e.preventDefault());
+            pool.addEventListener('drop', (e) => {
                 e.preventDefault();
                 const dragId = e.dataTransfer.getData('text/plain');
                 const draggedEl = document.getElementById(dragId);
                 if (draggedEl) {
-                    document.getElementById('pool-mol').appendChild(draggedEl);
+                    pool.appendChild(draggedEl);
                     draggedEl.classList.remove('correcto', 'incorrecto');
                 }
                 actualizarVasos();
             });
 
+            // ---------- Selección táctil / teclado ----------
+            function seleccionarIngrediente(id) {
+                const el = document.getElementById(id);
+                if (!el)
+                    return;
+                // Si ya estaba seleccionado, deseleccionar
+                if (ingredienteSeleccionado === id) {
+                    el.removeAttribute('aria-selected');
+                    ingredienteSeleccionado = null;
+                    return;
+                }
+                // Deseleccionar anterior
+                if (ingredienteSeleccionado) {
+                    const prev = document.getElementById(ingredienteSeleccionado);
+                    if (prev)
+                        prev.removeAttribute('aria-selected');
+                }
+                // Seleccionar nuevo
+                el.setAttribute('aria-selected', 'true');
+                ingredienteSeleccionado = id;
+                // Anunciar selección para lectores de pantalla
+                anunciar(`Seleccionado: ${el.textContent.trim()}. Toca una técnica para clasificarlo.`);
+            }
+
+            function moverSeleccionadoA(tech) {
+                if (!ingredienteSeleccionado) {
+                    // Si no hay selección previa, intentar seleccionar el primer ingrediente del pool
+                    const primerIng = pool.querySelector('.ingrediente');
+                    if (primerIng) {
+                        seleccionarIngrediente(primerIng.id);
+                    }
+                    if (!ingredienteSeleccionado)
+                        return; // aún nada
+                }
+                const el = document.getElementById(ingredienteSeleccionado);
+                if (!el)
+                    return;
+                const zonaId = 'zona-' + tech;
+                const zona = document.getElementById(zonaId);
+                if (!zona)
+                    return;
+                const inner = zona.querySelector('.dropzone-inner');
+                if (inner && el.parentElement !== inner) {
+                    inner.appendChild(el);
+                    el.classList.remove('correcto', 'incorrecto');
+                    aplicarEfectoCoctelera(el);
+                    actualizarVasos();
+                    anunciar(`Movido a ${tech}`);
+                }
+                // Deseleccionar
+                el.removeAttribute('aria-selected');
+                ingredienteSeleccionado = null;
+            }
+
+            function handleKeyIng(event, id) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    seleccionarIngrediente(id);
+                }
+            }
+
+            // Anuncio para lectores de pantalla (live region)
+            function anunciar(mensaje) {
+                const fb = document.getElementById('feedback-mol');
+                fb.style.display = 'block';
+                fb.textContent = mensaje;
+                setTimeout(() => {
+                    if (fb.textContent === mensaje) {
+                        fb.style.display = 'none';
+                    }
+                }, 2000);
+            }
+
+            // Permitir que las zonas reciban clic y muevan el ingrediente seleccionado
+            document.querySelectorAll('.zona').forEach(z => {
+                z.addEventListener('click', (e) => {
+                    // Si el clic fue en un ingrediente dentro de la zona, no mover
+                    if (e.target.classList.contains('ingrediente'))
+                        return;
+                    const tech = z.id.replace('zona-', '');
+                    moverSeleccionadoA(tech);
+                });
+            });
+
+            // ---------- Efecto coctelera ----------
             function aplicarEfectoCoctelera(el) {
                 el.style.transform = 'scale(1.1) rotate(2deg)';
                 setTimeout(() => el.style.transform = '', 200);
-
-                // Posición correcta usando getBoundingClientRect + scroll
                 const rect = el.getBoundingClientRect();
                 const span = document.createElement('span');
                 span.textContent = '🥤✨';
+                span.setAttribute('aria-hidden', 'true');
                 span.style.cssText = `
-        position: fixed;
-        left: ${rect.left + rect.width / 2}px;
-        top: ${rect.top - 20}px;
-        font-size: 1.5rem;
-        pointer-events: none;
-        opacity: 1;
-        transition: opacity 0.4s, transform 0.4s;
-        z-index: 9999;
-    `;
+                    position: fixed;
+                    left: ${rect.left + rect.width / 2}px;
+                    top: ${rect.top - 20}px;
+                    font-size: 1.5rem;
+                    pointer-events: none;
+                    opacity: 1;
+                    transition: opacity 0.4s, transform 0.4s;
+                    z-index: 9999;
+                `;
                 document.body.appendChild(span);
                 requestAnimationFrame(() => {
                     span.style.opacity = '0';
@@ -957,67 +1168,55 @@
                 setTimeout(() => span.remove(), 450);
             }
 
-// ========== ACTUALIZAR VASOS (lógica corregida) ==========
+            // ---------- Actualizar vasos y contadores ----------
             function actualizarVasos() {
-                const mapaZonas = {
-                    'zona-esferificacion': 'esferificacion',
-                    'zona-emulsion': 'emulsion',
-                    'zona-gelificacion': 'gelificacion'
-                };
-
-                // Cuántos ingredientes correctos existen por técnica (total esperado)
+                const tecnicas = ['esferificacion', 'emulsion', 'gelificacion'];
                 const totalPorTech = {};
                 document.querySelectorAll('.ingrediente').forEach(ing => {
                     const t = ing.dataset.tech;
                     totalPorTech[t] = (totalPorTech[t] || 0) + 1;
                 });
 
-                Object.entries(mapaZonas).forEach(([zonaId, techZona]) => {
-                    const zona = document.getElementById(zonaId);
-                    const ingredientesEnZona = zona.querySelectorAll('.ingrediente');
-
+                tecnicas.forEach(tech => {
+                    const zona = document.getElementById('zona-' + tech);
+                    const inner = zona.querySelector('.dropzone-inner');
+                    const ingredientesEnZona = inner.querySelectorAll('.ingrediente');
                     let correctosEnZona = 0;
                     ingredientesEnZona.forEach(ing => {
-                        if (ing.dataset.tech === techZona)
+                        if (ing.dataset.tech === tech)
                             correctosEnZona++;
                     });
-
-                    // El vaso sube según cuántos correctos haya vs el total esperado para esa técnica
-                    const esperados = totalPorTech[techZona] || 1;
+                    const esperados = totalPorTech[tech] || 1;
                     const porcentaje = Math.min((correctosEnZona / esperados) * 100, 100);
-
-                    const liquidId = zonaId.replace('zona-', 'liquid-');
+                    const liquidId = 'liquid-' + tech;
                     const liquidDiv = document.getElementById(liquidId);
                     if (liquidDiv)
                         liquidDiv.style.height = porcentaje + '%';
+                    // Actualizar contador
+                    const contador = document.getElementById('cont-' + tech);
+                    if (contador)
+                        contador.textContent = `${correctosEnZona}/${esperados} ingredientes correctos`;
                 });
             }
 
-// ========== VERIFICAR (corregido: también marca los del pool como error) ==========
+            // ---------- Verificar ----------
             function verificarClasificacion() {
                 const ingredientes = document.querySelectorAll('.ingrediente');
                 let correctos = 0;
                 const total = ingredientes.length;
-
                 ingredientes.forEach(ing => {
                     const techEsperada = ing.dataset.tech;
-                    const zonaActual = ing.parentElement.id;
-                    const esCorrecto = (`zona-${techEsperada}` === zonaActual);
-                    const enPool = (zonaActual === 'pool-mol');
-
+                    const parentZona = ing.closest('.zona');
+                    const zonaId = parentZona ? parentZona.id.replace('zona-', '') : null;
+                    const esCorrecto = (zonaId === techEsperada);
                     ing.classList.toggle('correcto', esCorrecto);
-                    // Si está en el pool, también se marca incorrecto (no clasificado)
                     ing.classList.toggle('incorrecto', !esCorrecto);
-
                     if (esCorrecto)
                         correctos++;
                 });
-
                 actualizarVasos();
-
                 const feedbackDiv = document.getElementById('feedback-mol');
                 feedbackDiv.style.display = 'block';
-
                 if (correctos === total) {
                     feedbackDiv.innerHTML = '<span style="color:#4ADE80;">✅ ¡Perfecto! Has armado el bar molecular correctamente. Todos los ingredientes en su técnica adecuada. 🍹✨</span>';
                 } else {
@@ -1025,82 +1224,173 @@
                 }
             }
 
-// ========== REINICIAR ==========
             function reiniciarClasificacion() {
-                const pool = document.getElementById('pool-mol');
                 document.querySelectorAll('.ingrediente').forEach(ing => {
                     ing.classList.remove('correcto', 'incorrecto');
                     pool.appendChild(ing);
                 });
                 document.getElementById('feedback-mol').style.display = 'none';
                 document.querySelectorAll('.liquid').forEach(l => l.style.height = '0%');
-            }
-
-// ========== ANIMACIONES DE CANVAS (sin cambios) ==========
-            const canvasEsf = document.getElementById('canvasEsfera');
-            const ctxEsf = canvasEsf.getContext('2d');
-            function animEsferificacion() {
-                ctxEsf.clearRect(0, 0, 200, 140);
-                ctxEsf.fillStyle = '#0D0D15';
-                ctxEsf.fillRect(0, 0, 200, 140);
-                ctxEsf.fillStyle = '#F64B8A';
-                ctxEsf.fillRect(0, 70, 200, 70);
-                let y = 40 + Math.sin(Date.now() * 0.005) * 6;
-                ctxEsf.beginPath();
-                ctxEsf.arc(60, y, 10, 0, Math.PI * 2);
-                ctxEsf.fillStyle = '#FFB347';
-                ctxEsf.fill();
-                for (let i = 0; i < 6; i++) {
-                    ctxEsf.beginPath();
-                    ctxEsf.arc(130 + i * 11, 95 + Math.sin(Date.now() * 0.003 + i) * 4, 5, 0, Math.PI * 2);
-                    ctxEsf.fillStyle = '#FF8C42';
-                    ctxEsf.fill();
+                document.querySelectorAll('.contador-zona').forEach(c => c.textContent = '0/2 ingredientes');
+                if (ingredienteSeleccionado) {
+                    document.getElementById(ingredienteSeleccionado)?.removeAttribute('aria-selected');
+                    ingredienteSeleccionado = null;
                 }
-                requestAnimationFrame(animEsferificacion);
             }
-            animEsferificacion();
 
-            const canvasEmul = document.getElementById('canvasEmulsion');
-            const ctxEmul = canvasEmul.getContext('2d');
-            function animEmulsion() {
-                ctxEmul.clearRect(0, 0, 200, 140);
-                ctxEmul.fillStyle = '#1A1A24';
-                ctxEmul.fillRect(0, 0, 200, 140);
+            // ========== CANVAS ANIMATIONS con IntersectionObserver y prefers-reduced-motion ==========
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            function iniciarAnimacionesCanvas() {
+                if (prefersReducedMotion) {
+                    // Dibujar un frame estático y salir
+                    dibujarFrameEstatico('canvasEsfera', 'esferificacion');
+                    dibujarFrameEstatico('canvasEmulsion', 'emulsion');
+                    dibujarFrameEstatico('canvasGel', 'gelificacion');
+                    return;
+                }
+                // Animación normal con observador de visibilidad
+                observarCanvas('canvasEsfera', animEsferificacion);
+                observarCanvas('canvasEmulsion', animEmulsion);
+                observarCanvas('canvasGel', animGel);
+            }
+
+            function dibujarFrameEstatico(canvasId, tipo) {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas)
+                    return;
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, 200, 140);
+                ctx.fillStyle = '#0D0D14';
+                ctx.fillRect(0, 0, 200, 140);
+                if (tipo === 'esferificacion') {
+                    ctx.fillStyle = '#F64B8A';
+                    ctx.fillRect(0, 70, 200, 70);
+                    ctx.beginPath();
+                    ctx.arc(60, 40, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = '#FFB347';
+                    ctx.fill();
+                } else if (tipo === 'emulsion') {
+                    for (let i = 0; i < 12; i++) {
+                        ctx.beginPath();
+                        ctx.arc(20 + i * 15, 30 + (i % 3) * 20, 4, 0, Math.PI * 2);
+                        ctx.fillStyle = i % 2 === 0 ? '#F64B8A' : '#FFB347';
+                        ctx.fill();
+                    }
+                } else if (tipo === 'gelificacion') {
+                    ctx.strokeStyle = '#4BC0C0';
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < 8; i++) {
+                        let x = 20 + i * 20;
+                        ctx.beginPath();
+                        ctx.moveTo(x, 40);
+                        ctx.lineTo(x + 12, 50);
+                        ctx.lineTo(x + 6, 60);
+                        ctx.fillStyle = '#5FD9D9';
+                        ctx.fill();
+                    }
+                }
+            }
+
+            function observarCanvas(canvasId, animLoop) {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas)
+                    return;
+                let animFrameId = null;
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            if (!animFrameId)
+                                animLoop(canvas);
+                        } else {
+                            if (animFrameId) {
+                                cancelAnimationFrame(animFrameId);
+                                animFrameId = null;
+                            }
+                        }
+                    });
+                }, {threshold: 0.1});
+                observer.observe(canvas);
+
+                function animLoopFn(c) {
+                    function frame() {
+                        if (!document.hidden) {
+                            animLoop(c);
+                        }
+                        animFrameId = requestAnimationFrame(frame);
+                    }
+                    frame();
+                }
+            }
+
+            function animEsferificacion(canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, 200, 140);
+                ctx.fillStyle = '#0D0D15';
+                ctx.fillRect(0, 0, 200, 140);
+                ctx.fillStyle = '#F64B8A';
+                ctx.fillRect(0, 70, 200, 70);
+                let y = 40 + Math.sin(Date.now() * 0.005) * 6;
+                ctx.beginPath();
+                ctx.arc(60, y, 10, 0, Math.PI * 2);
+                ctx.fillStyle = '#FFB347';
+                ctx.fill();
+                for (let i = 0; i < 6; i++) {
+                    ctx.beginPath();
+                    ctx.arc(130 + i * 11, 95 + Math.sin(Date.now() * 0.003 + i) * 4, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#FF8C42';
+                    ctx.fill();
+                }
+            }
+
+            function animEmulsion(canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, 200, 140);
+                ctx.fillStyle = '#1A1A24';
+                ctx.fillRect(0, 0, 200, 140);
                 for (let i = 0; i < 22; i++) {
                     let x = 15 + (i * 12 + Date.now() * 0.002) % 170;
                     let y = 25 + (i * 7) % 100;
-                    ctxEmul.beginPath();
-                    ctxEmul.arc(x, y, 4, 0, Math.PI * 2);
-                    ctxEmul.fillStyle = i % 2 === 0 ? '#F64B8A' : '#FFB347';
-                    ctxEmul.fill();
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = i % 2 === 0 ? '#F64B8A' : '#FFB347';
+                    ctx.fill();
                 }
-                requestAnimationFrame(animEmulsion);
             }
-            animEmulsion();
 
-            const canvasGel = document.getElementById('canvasGel');
-            const ctxGel = canvasGel.getContext('2d');
-            function animGel() {
-                ctxGel.clearRect(0, 0, 200, 140);
-                ctxGel.fillStyle = '#0F0F18';
-                ctxGel.fillRect(0, 0, 200, 140);
-                ctxGel.strokeStyle = '#4BC0C0';
-                ctxGel.lineWidth = 2;
+            function animGel(canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, 200, 140);
+                ctx.fillStyle = '#0F0F18';
+                ctx.fillRect(0, 0, 200, 140);
+                ctx.strokeStyle = '#4BC0C0';
+                ctx.lineWidth = 2;
                 for (let i = 0; i < 12; i++) {
                     let x = 20 + (i * 14);
                     let y = 40 + Math.sin(Date.now() * 0.002 + i) * 10;
-                    ctxGel.beginPath();
-                    ctxGel.moveTo(x, y);
-                    ctxGel.lineTo(x + 12, y + 8);
-                    ctxGel.lineTo(x + 6, y + 18);
-                    ctxGel.fillStyle = '#5FD9D9';
-                    ctxGel.fill();
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + 12, y + 8);
+                    ctx.lineTo(x + 6, y + 18);
+                    ctx.fillStyle = '#5FD9D9';
+                    ctx.fill();
                 }
-                requestAnimationFrame(animGel);
             }
-            animGel();
 
+            iniciarAnimacionesCanvas();
+
+            // Inicializar vasos y contadores al cargar
             actualizarVasos();
+
+            // Limpiar selección al hacer clic fuera
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.ingrediente') && !e.target.closest('.zona')) {
+                    if (ingredienteSeleccionado) {
+                        document.getElementById(ingredienteSeleccionado)?.removeAttribute('aria-selected');
+                        ingredienteSeleccionado = null;
+                    }
+                }
+            });
         </script>
     </body>
 </html>

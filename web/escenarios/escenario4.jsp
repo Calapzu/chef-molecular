@@ -39,7 +39,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(112deg, 
+                background: linear-gradient(112deg,
                     #9DC8E8 0%,
                     #C3DFF2 25%,
                     #F0EDE5 50%,
@@ -146,6 +146,11 @@
                 border-color: #D97A2B;
                 background: rgba(0,0,0,0.2);
             }
+            /* Mejora: focus visible para navegación por teclado */
+            .nav-back:focus-visible {
+                outline: 2px solid #F4C28C;
+                outline-offset: 2px;
+            }
             .sep {
                 width: 1px;
                 height: 18px;
@@ -175,6 +180,18 @@
                 align-items: center;
                 gap: 10px;
             }
+            /* SCROLL NAV */
+            .scroll-nav {
+                display: flex; justify-content: center; gap: 16px;
+                padding: 10px 16px; background: var(--panel-color);
+                border-bottom: 1px solid var(--borde-color);
+                position: sticky; top: 64px; z-index: 90;
+                backdrop-filter: blur(8px); flex-wrap: wrap;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+            .scroll-link { font-size: 13px; font-weight: 500; color: var(--texto2-color); text-decoration: none; padding: 6px 14px; border-radius: 20px; transition: all var(--transicion); }
+            .scroll-link:hover, .scroll-link.activo { color: var(--acento2-color); background: var(--escarcha-color); }
+
             .chip-completado {
                 display: flex;
                 align-items: center;
@@ -315,8 +332,14 @@
                 animation: subirTemperatura 6s ease-in-out infinite alternate;
             }
             @keyframes subirTemperatura {
-                from { height: 20%; background: linear-gradient(to top, #3A7CA5, #7EC8FF); }
-                to   { height: 80%; background: linear-gradient(to top, #E66A2C, #F4A261); }
+                from {
+                    height: 20%;
+                    background: linear-gradient(to top, #3A7CA5, #7EC8FF);
+                }
+                to   {
+                    height: 80%;
+                    background: linear-gradient(to top, #E66A2C, #F4A261);
+                }
             }
             .pasos-lista {
                 display: flex;
@@ -412,11 +435,16 @@
                 border: 1px solid #b0aaa0;
                 transition: transform 0.2s;
             }
-            .freezer:hover { transform: translateY(-5px); }
+            .freezer:hover {
+                transform: translateY(-5px);
+            }
             .freezer::after {
                 content: "";
                 position: absolute;
-                top: 5px; left: 5px; right: 5px; bottom: 5px;
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                bottom: 5px;
                 border: 2px solid #5F9EAA;
                 border-radius: 14px;
                 pointer-events: none;
@@ -424,30 +452,49 @@
             }
             .freezer-led {
                 position: absolute;
-                top: 12px; right: 20px;
-                width: 12px; height: 12px;
+                top: 12px;
+                right: 20px;
+                width: 12px;
+                height: 12px;
                 background: #00A8FF;
                 border-radius: 50%;
                 box-shadow: 0 0 8px #00A8FF;
                 animation: pulse 1.5s infinite;
             }
             @keyframes pulse {
-                0% { opacity: 0.4; transform: scale(0.9);}
-                100% { opacity: 1; transform: scale(1.2);}
+                0% {
+                    opacity: 0.4;
+                    transform: scale(0.9);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1.2);
+                }
             }
             .freezer-vaho {
                 position: absolute;
-                bottom: 10px; left: 10%;
-                width: 80%; height: 40%;
+                bottom: 10px;
+                left: 10%;
+                width: 80%;
+                height: 40%;
                 background: radial-gradient(circle, rgba(200,230,255,0.25) 0%, transparent 80%);
                 filter: blur(10px);
                 pointer-events: none;
                 animation: coldSteam 3s ease-in-out infinite;
             }
             @keyframes coldSteam {
-                0% { opacity: 0.2; transform: translateY(0px);}
-                50% { opacity: 0.5; transform: translateY(-5px);}
-                100% { opacity: 0.2; transform: translateY(0px);}
+                0% {
+                    opacity: 0.2;
+                    transform: translateY(0px);
+                }
+                50% {
+                    opacity: 0.5;
+                    transform: translateY(-5px);
+                }
+                100% {
+                    opacity: 0.2;
+                    transform: translateY(0px);
+                }
             }
             .freezer-door {
                 background: #F5F3EF;
@@ -460,13 +507,18 @@
                 z-index: 2;
             }
             .freezer-handle {
-                width: 80px; height: 8px;
+                width: 80px;
+                height: 8px;
                 background: linear-gradient(135deg, #C0C0C0, #F0F0F0);
                 border-radius: 4px;
                 margin: 0 auto 16px auto;
                 box-shadow: 0 1px 2px rgba(0,0,0,0.2);
             }
-            .freezer-icon { font-size: 3.5rem; margin: 16px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .freezer-icon {
+                font-size: 3.5rem;
+                margin: 16px 0;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
             .freezer-temp {
                 background: #DCE6F0;
                 border-radius: 30px;
@@ -477,7 +529,7 @@
             }
             .frost-3d {
                 background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.6) 1px, transparent 1px),
-                            repeating-linear-gradient(45deg, rgba(150,200,255,0.2) 0px, rgba(150,200,255,0.2) 2px, transparent 2px, transparent 8px);
+                    repeating-linear-gradient(45deg, rgba(150,200,255,0.2) 0px, rgba(150,200,255,0.2) 2px, transparent 2px, transparent 8px);
                 background-size: 20px 20px, 12px 12px;
                 border-radius: 12px;
                 padding: 8px;
@@ -491,11 +543,15 @@
                 position: relative;
                 transition: transform 0.2s;
             }
-            .oven:hover { transform: translateY(-5px); }
+            .oven:hover {
+                transform: translateY(-5px);
+            }
             .oven-glow {
                 position: absolute;
-                top: 20%; left: 15%;
-                width: 70%; height: 60%;
+                top: 20%;
+                left: 15%;
+                width: 70%;
+                height: 60%;
                 background: radial-gradient(ellipse, rgba(230,106,44,0.4), transparent);
                 filter: blur(20px);
                 pointer-events: none;
@@ -515,20 +571,27 @@
             .oven-door::before {
                 content: "";
                 position: absolute;
-                top: 10%; left: 5%;
-                width: 90%; height: 80%;
+                top: 10%;
+                left: 5%;
+                width: 90%;
+                height: 80%;
                 background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.05) 100%);
                 border-radius: 12px;
                 pointer-events: none;
             }
             .oven-handle {
-                width: 100px; height: 10px;
+                width: 100px;
+                height: 10px;
                 background: linear-gradient(145deg, #E0E0E0, #909090);
                 border-radius: 5px;
                 margin: 0 auto 16px auto;
                 box-shadow: 0 2px 3px rgba(0,0,0,0.3), inset 0 1px 0 white;
             }
-            .oven-icon { font-size: 3.5rem; margin: 16px 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+            .oven-icon {
+                font-size: 3.5rem;
+                margin: 16px 0;
+                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            }
             .oven-temp {
                 background: #2A1E12;
                 border-radius: 30px;
@@ -546,29 +609,47 @@
             }
             .heat-waves {
                 position: absolute;
-                bottom: 15px; left: 10%;
-                width: 80%; height: 30px;
+                bottom: 15px;
+                left: 10%;
+                width: 80%;
+                height: 30px;
                 pointer-events: none;
                 z-index: 3;
             }
             .heat-waves::before, .heat-waves::after {
                 content: "";
                 position: absolute;
-                bottom: 0; left: 0;
-                width: 100%; height: 100%;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
                 background: repeating-linear-gradient(transparent, rgba(255,140,0,0.3) 2px, transparent 6px);
                 animation: heatRise 1.2s infinite;
             }
-            .heat-waves::after { animation-delay: 0.6s; opacity: 0.6; }
+            .heat-waves::after {
+                animation-delay: 0.6s;
+                opacity: 0.6;
+            }
             @keyframes heatRise {
-                0% { transform: translateY(0px); opacity: 0; }
-                50% { transform: translateY(-12px); opacity: 0.6; }
-                100% { transform: translateY(-24px); opacity: 0; }
+                0% {
+                    transform: translateY(0px);
+                    opacity: 0;
+                }
+                50% {
+                    transform: translateY(-12px);
+                    opacity: 0.6;
+                }
+                100% {
+                    transform: translateY(-24px);
+                    opacity: 0;
+                }
             }
             .oven-knob {
                 position: absolute;
-                bottom: -15px; right: 20px;
-                width: 40px; height: 40px;
+                bottom: -15px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
                 background: radial-gradient(circle, #5A5A5A, #2C2C2C);
                 border-radius: 50%;
                 border: 2px solid #A0A0A0;
@@ -580,7 +661,8 @@
                 content: "◀";
                 position: absolute;
                 font-size: 16px;
-                top: 50%; left: 50%;
+                top: 50%;
+                left: 50%;
                 transform: translate(-50%, -50%);
                 color: #F4A261;
             }
@@ -598,15 +680,22 @@
                 -webkit-appearance: none;
                 background: linear-gradient(90deg, #3A7CA5, #F4A261, #C0392B);
                 border-radius: 10px;
+                cursor: pointer; /* Mejora UX */
             }
             input[type=range]::-webkit-slider-thumb {
                 -webkit-appearance: none;
-                width: 28px; height: 28px;
+                width: 28px;
+                height: 28px;
                 background: #D97A2B;
                 border-radius: 50%;
                 border: 3px solid white;
                 cursor: pointer;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            }
+            /* Mejora: focus visible en el slider */
+            input[type=range]:focus-visible {
+                outline: 2px solid #F4C28C;
+                outline-offset: 4px;
             }
             .temp-actual {
                 font-size: 1.8rem;
@@ -617,6 +706,7 @@
                 padding: 6px 24px;
                 border-radius: 50px;
                 color: #4A2A1A;
+                transition: background-color 0.3s, color 0.3s; /* Microinteracción */
             }
             .estado-texto {
                 font-size: 1rem;
@@ -626,6 +716,7 @@
                 border-radius: 40px;
                 margin-left: 10px;
                 color: #4A2A1A;
+                transition: background-color 0.3s, color 0.3s; /* Microinteracción */
             }
             .canvas-container {
                 background: rgba(0,0,0,0.4);
@@ -649,6 +740,8 @@
                 padding: 24px;
                 margin: 20px;
                 color: #FDF8F0;
+                font-size: 0.95rem; /* Mejora sutil de legibilidad */
+                line-height: 1.6;
             }
             .btn-quiz {
                 background: #D97A2B;
@@ -660,47 +753,75 @@
                 display: inline-block;
                 transition: 0.2s;
                 margin-top: 12px;
+                cursor: pointer;
             }
             .btn-quiz:hover {
                 background: #C0641A;
                 transform: translateY(-2px);
             }
+            .btn-quiz:focus-visible {
+                outline: 2px solid #F4C28C;
+                outline-offset: 2px;
+            }
+            /* Mejora: suavizado de la aparición del texto de estado */
+            .fade-in {
+                animation: fadeIn 0.25s ease-out;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0.6;
+                    transform: translateY(3px);
+                }
+                to   {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
             @media (max-width: 800px) {
-                .electrodomesticos { flex-direction: column; align-items: center; }
-                .navbar { padding: 0 20px; }
-                .hero { padding: 40px 20px; }
-                .contenido { padding: 30px 20px 60px; }
+                .electrodomesticos {
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .navbar {
+                    padding: 0 20px;
+                }
+                .hero {
+                    padding: 40px 20px;
+                }
+                .contenido {
+                    padding: 30px 20px 60px;
+                }
             }
         </style>
     </head>
     <body>
-        <div class="flame-pattern"></div>
-        <div class="bg-thermometer">
+        <div class="flame-pattern" aria-hidden="true"></div>
+        <div class="bg-thermometer" aria-hidden="true">
             <div class="tube"></div>
             <div class="bulb"></div>
         </div>
 
-        <nav class="navbar">
+        <nav class="navbar" aria-label="Navegación principal">
             <div class="navbar-izq">
-                <a href="${pageContext.request.contextPath}/menu" class="nav-back">
-                    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                <a href="${pageContext.request.contextPath}/menu" class="nav-back" aria-label="Volver al menú principal">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
                     Volver
                 </a>
-                <div class="sep"></div>
+                <div class="sep" aria-hidden="true"></div>
                 <div class="nav-escenario-info">
                     <span class="nav-badge">Escenario 04 🔥❄️</span>
-                    <div class="sep"></div>
+                    <div class="sep" aria-hidden="true"></div>
                     <span class="nav-nombre">Horno y Congelador</span>
                 </div>
             </div>
             <div class="navbar-der">
                 <span class="nav-temp">🌡️ Control térmico</span>
-                <% if (completado) { %>
-                <div class="chip-completado">✅ Completado</div>
-                <div class="estrellas-nav">
-                    <div class="est <%= estrellas >= 1 ? "on" : "off" %>"></div>
-                    <div class="est <%= estrellas >= 2 ? "on" : "off" %>"></div>
-                    <div class="est <%= estrellas >= 3 ? "on" : "off" %>"></div>
+                <% if (completado) {%>
+                <div class="chip-completado" role="status">✅ Completado</div>
+                <div class="estrellas-nav" aria-label="Puntuación: <%= estrellas%> de 3 estrellas">
+                    <div class="est <%= estrellas >= 1 ? "on" : "off"%>" aria-hidden="true"></div>
+                    <div class="est <%= estrellas >= 2 ? "on" : "off"%>" aria-hidden="true"></div>
+                    <div class="est <%= estrellas >= 3 ? "on" : "off"%>" aria-hidden="true"></div>
                 </div>
                 <% } %>
             </div>
@@ -716,7 +837,7 @@
                         Mueve el control deslizante desde el congelador (-20°C) hasta el horno (220°C). Observa cómo se comportan las moléculas: vibran en frío, fluyen a temperatura ambiente y se agitan violentamente al calentarse.
                     </p>
                 </div>
-                <div class="hero-temp-panel">
+                <div class="hero-temp-panel" aria-hidden="true">
                     <div class="termometro">
                         <div class="temp-numero">🌡️</div>
                         <div class="temp-barra-wrap"><div class="temp-barra-fill"></div></div>
@@ -730,17 +851,25 @@
                 </div>
             </div>
         </div>
+            
+            <!-- NAVEGACIÓN STICKY (MEJORA UX) -->
+        <div class="scroll-nav">
+            <a href="#seccion-anim" class="scroll-link" data-target="seccion-anim">🔥❄️ Materia</a>
+            <a href="#seccion-exp" class="scroll-link" data-target="seccion-exp">🧪 Experimenta</a>
+            <a href="#seccion-act" class="scroll-link" data-target="seccion-act">🎮 Actividad</a>
+        </div>
+
 
         <div class="contenido">
             <!-- Sección 1: Electrodomésticos y termostato -->
-            <div class="sec-head">
-                <div class="sec-num">1</div>
+            <div class="sec-head" id="seccion-anim">
+                <div class="sec-num" aria-hidden="true">1</div>
                 <span class="sec-titulo">❄️ Electrodomésticos moleculares</span>
-                <div class="sec-linea"></div>
+                <div class="sec-linea" aria-hidden="true"></div>
             </div>
             <div class="sec-bloque">
                 <div class="electrodomesticos">
-                    <div class="freezer">
+                    <div class="freezer" role="img" aria-label="Congelador: temperatura de -18°C a 0°C">
                         <div class="freezer-led"></div>
                         <div class="freezer-vaho"></div>
                         <div class="freezer-door">
@@ -752,7 +881,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="oven">
+                    <div class="oven" role="img" aria-label="Horno: temperatura de 100°C a 220°C">
                         <div class="oven-glow"></div>
                         <div class="oven-door">
                             <div class="oven-handle"></div>
@@ -762,45 +891,48 @@
                             <div class="heat-waves"></div>
                             <div style="font-size:0.7rem; margin-top: 8px; color:#F4A261;">Horno · Alimentos calientes</div>
                         </div>
-                        <div class="oven-knob" title="Perilla de temperatura"></div>
+                        <div class="oven-knob" title="Perilla de temperatura" aria-label="Perilla decorativa del horno"></div>
                     </div>
                 </div>
                 <div class="slider-central">
-                    <label style="color:#FDF8F0; font-weight: bold;">🌡️ Mueve el termostato del congelador al horno</label>
-                    <input type="range" id="tempSlider" min="-20" max="220" value="20" step="1" oninput="actualizarTemp(this.value)">
+                    <label for="tempSlider" style="color:#FDF8F0; font-weight: bold;">🌡️ Mueve el termostato del congelador al horno</label>
+                    <input type="range" id="tempSlider" min="-20" max="220" value="20" step="1"
+                           aria-valuemin="-20" aria-valuemax="220" aria-valuenow="20"
+                           aria-label="Control de temperatura de -20 a 220 grados Celsius"
+                           oninput="actualizarTemp(this.value)">
                     <div>
-                        <span class="temp-actual" id="tempVal">20 °C</span>
-                        <span class="estado-texto" id="estadoText">💧 Líquido</span>
+                        <span class="temp-actual" id="tempVal" role="status" aria-live="polite">20 °C</span>
+                        <span class="estado-texto" id="estadoText" aria-live="polite">💧 Líquido</span>
                     </div>
                 </div>
                 <div class="canvas-container">
-                    <canvas id="canvasCambioEstado" width="780" height="240" style="max-width:100%; height:auto;"></canvas>
+                    <canvas id="canvasCambioEstado" width="780" height="240" style="max-width:100%; height:auto;" aria-label="Simulación de partículas según temperatura"></canvas>
                 </div>
             </div>
 
             <!-- Sección 2: Explicación molecular -->
-            <div class="sec-head">
-                <div class="sec-num">2</div>
+            <div class="sec-head" id="seccion-exp">
+                <div class="sec-num" aria-hidden="true">2</div>
                 <span class="sec-titulo">🔬 ¿Qué pasa dentro de la materia?</span>
-                <div class="sec-linea"></div>
+                <div class="sec-linea" aria-hidden="true"></div>
             </div>
             <div class="sec-bloque">
-                <div class="seccion-explicativa" id="infoTexto">
+                <div class="seccion-explicativa" id="infoTexto" role="region" aria-live="polite" aria-label="Explicación científica del estado actual">
                     A temperatura ambiente, las moléculas se mueven libremente. Al enfriar (congelador) se ordenan y se vuelven sólidas. Al calentar (horno) se agitan mucho y pueden volverse gaseosas (vapor).
                 </div>
             </div>
 
             <!-- SECCIÓN 3: ACTIVIDAD INTERACTIVA -->
-            <div class="sec-head">
-                <div class="sec-num">3</div>
+            <div class="sec-head" id="seccion-act">
+                <div class="sec-num" aria-hidden="true">3</div>
                 <span class="sec-titulo">🎮 Actividad de Cambios de estado</span>
-                <div class="sec-linea"></div>
+                <div class="sec-linea" aria-hidden="true"></div>
             </div>
             <div class="sec-bloque">
-                <div class="quiz-wrap">
-                    <div>
-                        <div class="quiz-titulo" style="font-family:'Playfair Display',serif; font-size:1.1rem;">🧪 Clasifica las moléculas polares y no polares</div>
-                        <p class="quiz-desc" style="font-size:12px; color: var(--texto2-color);">
+                <div class="quiz-wrap" style="padding: 24px;">
+                    <div style="margin-bottom: 20px;">
+                        <div class="quiz-titulo" style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#FDF8F0; margin-bottom: 8px;">🧪 Clasifica las moléculas polares y no polares</div>
+                        <p class="quiz-desc" style="font-size:12px; color: #F4C28C;">
                             <% if (completado) { %>
                             ✅ ¡Ya completaste este escenario! Puedes volver a practicar para mejorar tu puntuación.
                             <% } else { %>
@@ -808,7 +940,7 @@
                             <% }%>
                         </p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/actividad?escenario=<%= idEscenario%>" class="btn-quiz">
+                    <a href="${pageContext.request.contextPath}/actividad?escenario=<%= idEscenario%>" class="btn-quiz" role="button">
                         <% if (completado) { %>
                         🔁 Practicar de nuevo
                         <% } else { %>
@@ -839,8 +971,10 @@
             resizeCanvas();
 
             function getState(t) {
-                if (t <= 0) return 'solid';
-                if (t >= 100) return 'gas';
+                if (t <= 0)
+                    return 'solid';
+                if (t >= 100)
+                    return 'gas';
                 return 'liquid';
             }
 
@@ -853,8 +987,10 @@
                     if (state === 'solid') {
                         x = 30 + (i % 14) * 55;
                         y = 30 + Math.floor(i / 14) * 45;
-                        if (x > canvas.width - 30) x = canvas.width - 30;
-                        if (y > canvas.height - 40) y = canvas.height - 40;
+                        if (x > canvas.width - 30)
+                            x = canvas.width - 30;
+                        if (y > canvas.height - 40)
+                            y = canvas.height - 40;
                     } else {
                         x = 20 + Math.random() * (canvas.width - 40);
                         y = 20 + Math.random() * (canvas.height - 40);
@@ -919,8 +1055,10 @@
                     for (let p of particles) {
                         p.x += p.vx;
                         p.y += p.vy;
-                        if (p.x < p.r || p.x > canvas.width - p.r) p.vx *= -0.95;
-                        if (p.y < p.r || p.y > canvas.height - p.r) p.vy *= -0.95;
+                        if (p.x < p.r || p.x > canvas.width - p.r)
+                            p.vx *= -0.95;
+                        if (p.y < p.r || p.y > canvas.height - p.r)
+                            p.vy *= -0.95;
                         p.x = Math.min(Math.max(p.x, p.r), canvas.width - p.r);
                         p.y = Math.min(Math.max(p.y, p.r), canvas.height - p.r);
                     }
@@ -935,7 +1073,19 @@
 
             function actualizarTemp(val) {
                 tempActual = parseInt(val);
-                document.getElementById('tempVal').innerHTML = tempActual + ' °C';
+                const tempValEl = document.getElementById('tempVal');
+                const estadoTextEl = document.getElementById('estadoText');
+                const infoTextoEl = document.getElementById('infoTexto');
+                const slider = document.getElementById('tempSlider');
+
+                // Actualizar atributos ARIA en el slider
+                slider.setAttribute('aria-valuenow', tempActual);
+
+                // Actualizar display de temperatura con microinteracción
+                tempValEl.innerHTML = tempActual + ' °C';
+                tempValEl.classList.add('fade-in');
+                setTimeout(() => tempValEl.classList.remove('fade-in'), 300);
+
                 let newState = getState(tempActual);
                 if (newState !== currentState) {
                     currentState = newState;
@@ -953,8 +1103,13 @@
                     estadoNombre = '💨 Gaseoso (vapor)';
                     desc = 'Las moléculas se separan y se mueven rápido. El agua hierve y se evapora.';
                 }
-                document.getElementById('estadoText').innerHTML = estadoNombre;
-                document.getElementById('infoTexto').innerHTML = desc + ' El control se mueve desde el congelador (❄️) hasta el horno (🔥).';
+                estadoTextEl.innerHTML = estadoNombre;
+                estadoTextEl.classList.add('fade-in');
+                setTimeout(() => estadoTextEl.classList.remove('fade-in'), 300);
+
+                infoTextoEl.innerHTML = desc + ' El control se mueve desde el congelador (❄️) hasta el horno (🔥).';
+                infoTextoEl.classList.add('fade-in');
+                setTimeout(() => infoTextoEl.classList.remove('fade-in'), 300);
             }
 
             initParticles('liquid');

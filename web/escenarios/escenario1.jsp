@@ -380,6 +380,34 @@
                 background: rgba(7,21,37,0.6);
             }
 
+            /* ═══ NAVEGACIÓN STICKY (MEJORA UX) ═══ */
+            .scroll-nav {
+                display: flex;
+                justify-content: center;
+                gap: 24px;
+                padding: 12px 16px;
+                background: var(--hie-panel);
+                border-bottom: 1px solid var(--hie-borde);
+                position: sticky;
+                top: 64px;
+                z-index: 90;
+                backdrop-filter: blur(8px);
+                flex-wrap: wrap;
+            }
+            .scroll-link {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--hie-texto2);
+                text-decoration: none;
+                padding: 6px 12px;
+                border-radius: 20px;
+                transition: all var(--transicion);
+            }
+            .scroll-link:hover {
+                color: var(--hie-acento2);
+                background: var(--hie-escarcha);
+            }
+
             /* ═══ CONTENIDO ═══ */
             .contenido {
                 max-width: 860px;
@@ -519,7 +547,9 @@
                 cursor: help;
                 position: relative;
             }
-            .tooltip-icon:hover::after {
+            .tooltip-icon:hover::after,
+            .tooltip-icon:focus::after,
+            .tooltip-icon:active::after {
                 content: attr(data-tooltip);
                 position: absolute;
                 bottom: 150%;
@@ -696,6 +726,34 @@
                 box-shadow: 0 0 4px rgba(125,207,234,0.3);
             }
 
+            /* ═══ TOAST DE LOGRO ═══ */
+            #toastLogro {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--hie-acento);
+                color: #040C14;
+                padding: 10px 20px;
+                border-radius: 40px;
+                font-weight: bold;
+                z-index: 200;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+                font-size: 14px;
+                white-space: nowrap;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+
+            /* ═══ MEJORAS DE CONTRASTE EN MODO DÍA ═══ */
+            body.dia .hero-desc,
+            body.dia .res-texto,
+            body.dia .exp-intro {
+                color: rgba(26,46,58,0.75);
+            }
+
+            /* ═══ MEJORAS TÁCTILES EN MÓVIL ═══ */
             @media (max-width: 680px) {
                 .anim-nota {
                     grid-template-columns: 1fr;
@@ -715,6 +773,27 @@
                 }
                 .contenido {
                     padding: 30px 20px 60px;
+                }
+                .ctrl, .mol-chip, .btn-tema, .nav-back {
+                    padding: 8px 16px;
+                    font-size: 13px;
+                }
+                .mols-grid {
+                    gap: 12px;
+                }
+                .scroll-nav {
+                    gap: 12px;
+                    top: 56px;
+                }
+                .scroll-link {
+                    font-size: 11px;
+                    padding: 4px 10px;
+                }
+                #toastLogro {
+                    font-size: 12px;
+                    white-space: normal;
+                    text-align: center;
+                    width: 90%;
                 }
             }
         </style>
@@ -788,22 +867,29 @@
             </div>
         </div>
 
+        <!-- NAVEGACIÓN STICKY (MEJORA UX) -->
+        <div class="scroll-nav">
+            <a href="#seccion-anim" class="scroll-link" data-target="seccion-anim">❄️ Fuerzas</a>
+            <a href="#seccion-exp" class="scroll-link" data-target="seccion-exp">🧪 Experimenta</a>
+            <a href="#seccion-act" class="scroll-link" data-target="seccion-act">🎮 Actividad</a>
+        </div>
+
         <div class="contenido">
             <!-- SECCIÓN 1 — ANIMACIÓN (AGUA vs ACEITE) -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-anim">
                 <div class="sec-num">1</div>
                 <span class="sec-titulo">❄️ Interacción molecular — Agua (polar) vs Aceite/Octano (no polar)
-                    <span class="tooltip-icon" data-tooltip="Modo Polar: moléculas de AGUA con dipolo permanente. Modo No Polar: moléculas de OCTANO (aceite) con fuerzas de London">ⓘ</span>
+                    <span class="tooltip-icon" tabindex="0" role="tooltip" data-tooltip="Modo Polar: moléculas de AGUA con dipolo permanente. Modo No Polar: moléculas de OCTANO (aceite) con fuerzas de London">ⓘ</span>
                 </span>
                 <div class="sec-linea"></div>
             </div>
-            <div class="sec-bloque">
+            <div class="sec-bloque" id="seccion-anim-bloque">
                 <div class="canvas-wrapper">
                     <canvas id="canvas-mol" width="1600" height="560"></canvas>
                 </div>
                 <div class="anim-pie">
-                    <button class="ctrl" onclick="pausarAnim()">⏸ Pausar</button>
-                    <button class="ctrl" onclick="reanudarAnim()">▶ Reanudar</button>
+                    <button id="btnPausa" class="ctrl" onclick="pausarAnim()">⏸ Pausar</button>
+                    <button id="btnReanudar" class="ctrl activo" onclick="reanudarAnim()">▶ Reanudar</button>
                     <button class="ctrl" onclick="reiniciarAnim()">⟳ Reiniciar</button>
                     <button id="btnModoNoPolar" class="ctrl activo">🫒 No polares (Aceite / Octano)</button>
                     <button id="btnModoPolar" class="ctrl">💧 Polares (Agua H₂O)</button>
@@ -825,12 +911,12 @@
             </div>
 
             <!-- SECCIÓN 2 — EXPERIMENTO MEJORADO -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-exp">
                 <div class="sec-num">2</div>
                 <span class="sec-titulo">🧪 Experimento — ¿Se mezclan en la nevera?</span>
                 <div class="sec-linea"></div>
             </div>
-            <div class="sec-bloque">
+            <div class="sec-bloque" id="seccion-exp-bloque">
                 <div class="exp-wrap">
                     <p class="exp-intro">🥄 Selecciona dos ingredientes y observa qué fuerzas intermoleculares actúan entre ellos y si forman una mezcla homogénea en frío.</p>
                     <div class="mols-grid" id="molGrid">
@@ -870,12 +956,12 @@
             </div>
 
             <!-- SECCIÓN 3 — ACTIVIDAD INTERACTIVA -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-act">
                 <div class="sec-num">3</div>
                 <span class="sec-titulo">🧪 Actividad Interactiva — Pon en práctica lo aprendido</span>
                 <div class="sec-linea"></div>
             </div>
-            <div class="sec-bloque">
+            <div class="sec-bloque" id="seccion-act-bloque">
                 <div class="quiz-wrap">
                     <div>
                         <div class="quiz-titulo">🎮 Actividad de clasificación molecular</div>
@@ -887,7 +973,7 @@
                             <% }%>
                         </p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/actividad?escenario=<%= idEscenario%>" class="btn-quiz">
+                    <a href="${pageContext.request.contextPath}/actividad?escenario=<%= idEscenario%>" class="btn-quiz" id="btnQuiz">
                         <% if (completado) { %>
                         🔁 Practicar de nuevo
                         <% } else { %>
@@ -898,8 +984,22 @@
             </div>
         </div>
 
+        <!-- TOAST DE LOGRO -->
+        <div id="toastLogro">✨ ¡Escenario completado! +1 estrella</div>
+
         <script>
-            // ========== HERO CANVAS (copos de nieve) ==========
+            // ========== TOAST AUTOMÁTICO SI YA ESTÁ COMPLETADO ==========
+            <% if (completado) { %>
+            setTimeout(() => {
+                const toast = document.getElementById('toastLogro');
+                if (toast) {
+                    toast.style.opacity = '1';
+                    setTimeout(() => toast.style.opacity = '0', 3000);
+                }
+            }, 500);
+            <% }%>
+
+            // ========== HERO CANVAS (copos de nieve con límite móvil) ==========
             const heroCanvas = document.getElementById('canvas-hero');
             let heroCtx = heroCanvas.getContext('2d');
             let heroParticles = [];
@@ -910,7 +1010,8 @@
                 heroHeight = rect.height;
                 heroCanvas.width = heroWidth;
                 heroCanvas.height = heroHeight;
-                heroParticles = Array.from({length: Math.min(60, Math.floor(heroWidth / 20))}, () => ({
+                const maxParticles = heroWidth < 600 ? 25 : 60;
+                heroParticles = Array.from({length: Math.min(maxParticles, Math.floor(heroWidth / 20))}, () => ({
                         x: Math.random(), y: Math.random(), s: 1 + Math.random() * 3, v: 0.0001 + Math.random() * 0.00015, a: Math.random() * Math.PI * 2
                     }));
             }
@@ -947,7 +1048,7 @@
             let mols = [];
 
             function generarMols(modo) {
-                const numMols = 16; // un poco menos para que se vean mejor los detalles
+                const numMols = 16;
                 const nuevos = [];
                 for (let i = 0; i < numMols; i++) {
                     nuevos.push({
@@ -955,10 +1056,10 @@
                         y: Math.random() * (CH - 80) + 40,
                         vx: (Math.random() - 0.5) * (modo ? 0.7 : 0.9),
                         vy: (Math.random() - 0.5) * (modo ? 0.7 : 0.9),
-                        r: 28 + Math.random() * 8, // radio base
+                        r: 28 + Math.random() * 8,
                         fase: Math.random() * Math.PI * 2,
                         polar: modo,
-                        angulo: Math.random() * Math.PI * 2, // orientación (para agua y para octano)
+                        angulo: Math.random() * Math.PI * 2,
                         velocidadAngular: (Math.random() - 0.5) * 0.02
                     });
                 }
@@ -971,7 +1072,6 @@
 
             reiniciarMolsSegunModo();
 
-            // Cristales decorativos
             const cristalesFondo = Array.from({length: 22}, () => ({
                     x: Math.random() * CW, y: Math.random() * CH, sz: 18 + Math.random() * 32, rot: Math.random() * Math.PI, op: 0.03 + Math.random() * 0.05
                 }));
@@ -1002,20 +1102,16 @@
                 ctxm.restore();
             }
 
-            // ---------- DIBUJAR MOLÉCULA DE AGUA (POLAR) ----------
             function dibujarAgua(m, tiempo) {
                 const cx = m.x, cy = m.y, rad = m.r;
-                // ángulo de orientación (apunta el dipolo)
                 let ang = m.angulo;
-                // distancia de los hidrógenos desde el centro (aproximación)
                 const dH = rad * 0.7;
-                const anguloH1 = ang - 0.8;   // ~ -45 grados
+                const anguloH1 = ang - 0.8;
                 const anguloH2 = ang + 0.8;
                 const hx1 = cx + Math.cos(anguloH1) * dH;
                 const hy1 = cy + Math.sin(anguloH1) * dH;
                 const hx2 = cx + Math.cos(anguloH2) * dH;
                 const hy2 = cy + Math.sin(anguloH2) * dH;
-                // Oxígeno (centro)
                 ctxm.beginPath();
                 ctxm.arc(cx, cy, rad * 0.55, 0, Math.PI * 2);
                 ctxm.fillStyle = '#6DC4F0';
@@ -1023,7 +1119,6 @@
                 ctxm.strokeStyle = '#2A7FA8';
                 ctxm.lineWidth = 1.2;
                 ctxm.stroke();
-                // Hidrógenos (círculos pequeños)
                 ctxm.beginPath();
                 ctxm.arc(hx1, hy1, rad * 0.25, 0, Math.PI * 2);
                 ctxm.fillStyle = '#D0F0FF';
@@ -1031,7 +1126,6 @@
                 ctxm.beginPath();
                 ctxm.arc(hx2, hy2, rad * 0.25, 0, Math.PI * 2);
                 ctxm.fill();
-                // enlaces O-H
                 ctxm.beginPath();
                 ctxm.moveTo(cx, cy);
                 ctxm.lineTo(hx1, hy1);
@@ -1040,24 +1134,19 @@
                 ctxm.strokeStyle = 'rgba(255,255,255,0.7)';
                 ctxm.lineWidth = 1.5;
                 ctxm.stroke();
-                // Cargas parciales: δ+ en hidrógenos, δ- en oxígeno
                 ctxm.font = 'bold 11px "DM Sans", sans-serif';
                 ctxm.fillStyle = '#FFB347';
                 ctxm.fillText('δ⁺', hx1 - 8, hy1 - 4);
                 ctxm.fillText('δ⁺', hx2 - 8, hy2 - 4);
                 ctxm.fillStyle = '#FF8C42';
                 ctxm.fillText('δ⁻', cx + 5, cy - 8);
-                // Etiqueta H₂O
                 ctxm.font = 'bold 10px "DM Sans", sans-serif';
                 ctxm.fillStyle = 'rgba(255,255,210,0.9)';
-                ctxm.shadowBlur = 0;
                 ctxm.fillText('H₂O', cx - 12, cy - rad * 0.6);
             }
 
-            // ---------- DIBUJAR MOLÉCULA DE OCTANO / ACEITE (NO POLAR) ----------
             function dibujarOctano(m, tiempo) {
                 const cx = m.x, cy = m.y, rad = m.r;
-                // Forma de gota o esfera con textura de hidrocarburo
                 const grad = ctxm.createLinearGradient(cx - rad * 0.4, cy - rad * 0.4, cx + rad * 0.5, cy + rad * 0.5);
                 grad.addColorStop(0, '#C0E0E8');
                 grad.addColorStop(0.5, '#8DBCCF');
@@ -1069,7 +1158,6 @@
                 ctxm.strokeStyle = '#1E4A60';
                 ctxm.lineWidth = 1;
                 ctxm.stroke();
-                // Simulación de cadena carbonada: pequeñas líneas internas
                 ctxm.save();
                 ctxm.beginPath();
                 ctxm.arc(cx, cy, rad * 0.55, 0, Math.PI * 2);
@@ -1088,7 +1176,6 @@
                     ctxm.stroke();
                 }
                 ctxm.restore();
-                // Etiqueta: C₈H₁₈ / Aceite
                 ctxm.font = 'bold 9px "DM Sans", sans-serif';
                 ctxm.fillStyle = '#E6F7FF';
                 ctxm.fillText('C₈H₁₈', cx - 14, cy - rad * 0.5);
@@ -1105,7 +1192,6 @@
                 }
             }
 
-            // Dibujar fuerzas entre moléculas según modo
             function dibujarInteracciones() {
                 for (let i = 0; i < mols.length; i++) {
                     for (let j = i + 1; j < mols.length; j++) {
@@ -1123,7 +1209,6 @@
                                 ctxm.stroke();
                                 ctxm.setLineDash([]);
                             } else {
-                                // Fuerza dipolo-dipolo para agua
                                 const angI = mols[i].angulo, angJ = mols[j].angulo;
                                 const dirI = {x: Math.cos(angI), y: Math.sin(angI)};
                                 const dirJ = {x: Math.cos(angJ), y: Math.sin(angJ)};
@@ -1169,9 +1254,7 @@
                 mols.forEach(m => {
                     m.x += m.vx;
                     m.y += m.vy;
-                    // Rotación para orientación (visible en agua y octano)
                     m.angulo += m.velocidadAngular;
-                    // Colisiones con bordes
                     const rEfectivo = m.r * 0.8;
                     if (m.x - rEfectivo < 0) {
                         m.x = rEfectivo;
@@ -1253,15 +1336,23 @@
             }
 
             function pausarAnim() {
+                if (!corriendoAnim)
+                    return;
                 corriendoAnim = false;
-                if (animId)
+                if (animId) {
                     cancelAnimationFrame(animId);
+                    animId = null;
+                }
+                document.getElementById('btnPausa').classList.add('activo');
+                document.getElementById('btnReanudar').classList.remove('activo');
             }
             function reanudarAnim() {
-                if (!corriendoAnim) {
-                    corriendoAnim = true;
-                    animLoop();
-                }
+                if (corriendoAnim)
+                    return;
+                corriendoAnim = true;
+                animLoop();
+                document.getElementById('btnReanudar').classList.add('activo');
+                document.getElementById('btnPausa').classList.remove('activo');
             }
             function reiniciarAnim() {
                 pausarAnim();
@@ -1273,7 +1364,7 @@
                 entries.forEach(entry => {
                     if (!entry.isIntersecting && corriendoAnim) {
                         pausarAnim();
-                    } else if (entry.isIntersecting && !corriendoAnim && animId === undefined) {
+                    } else if (entry.isIntersecting && !corriendoAnim && animId === null) {
                         reanudarAnim();
                     }
                 });
@@ -1314,7 +1405,7 @@
                 }
             });
 
-            // ========== EXPERIMENTO (sin cambios, funciona igual) ==========
+            // ========== EXPERIMENTO (con mejora anti-duplicado) ==========
             let seleccionados = [];
             const resPanel = document.getElementById('resPanel');
             const resFranja = document.getElementById('resFranja');
@@ -1325,12 +1416,8 @@
 
             function actualizarSeleccion(chip, nombre, tipo) {
                 const existe = seleccionados.find(s => s.nombre === nombre);
+                // No permitir seleccionar el mismo elemento dos veces
                 if (existe) {
-                    seleccionados = seleccionados.filter(s => s.nombre !== nombre);
-                    chip.classList.remove('sel');
-                    chip.setAttribute('aria-selected', 'false');
-                    if (seleccionados.length < 2)
-                        resPanel.classList.remove('vis');
                     return false;
                 }
                 if (seleccionados.length >= 2) {
@@ -1405,7 +1492,33 @@
             });
             btnLimpiar.addEventListener('click', limpiarExperimento);
 
-            // ========== MODO DÍA / NOCHE ==========
+            // ========== SPINNER EN BOTÓN QUIZ ==========
+            const btnQuiz = document.getElementById('btnQuiz');
+            if (btnQuiz) {
+                btnQuiz.addEventListener('click', function (e) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '⏳ Cargando...';
+                    this.style.opacity = '0.7';
+                    setTimeout(() => {
+                        // No restaurar si la navegación ya ocurrió (es solo feedback)
+                        // pero no interferimos con el href
+                    }, 1500);
+                });
+            }
+
+            // ========== SCROLL SUAVE PARA NAVEGACIÓN ==========
+            document.querySelectorAll('.scroll-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({behavior: 'smooth'});
+                    }
+                });
+            });
+
+            // ========== MODO DÍA / NOCHE (con atajo de teclado) ==========
             const CLAVE = 'chefMolecularTema';
             const btnT = document.getElementById('btnTema');
             const icoP = document.getElementById('iconoPath');
@@ -1438,6 +1551,21 @@
                 if (guardado === 'dia')
                     aplicarTema(true);
             })();
+
+            // ========== ATAJOS DE TECLADO ==========
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'd' || e.key === 'D') {
+                    toggleTema();
+                    e.preventDefault();
+                }
+                if (e.key === ' ' && document.activeElement?.tagName !== 'BUTTON' && document.activeElement?.tagName !== 'A' && document.activeElement?.tagName !== 'INPUT') {
+                    if (corriendoAnim)
+                        pausarAnim();
+                    else
+                        reanudarAnim();
+                    e.preventDefault();
+                }
+            });
         </script>
     </body>
 </html>

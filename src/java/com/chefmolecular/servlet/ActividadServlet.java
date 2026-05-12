@@ -220,18 +220,15 @@ public class ActividadServlet extends HttpServlet {
 
                 // ----- NUEVO: Pantalla de logros para Escenario 6 -----
                 if (idEscenario == 6) {
-                    List<Insignia> insignias = gamificacionLogica.obtenerInsigniasNuevas(estudiante.getIdEstudiante());
+                    List<Insignia> insignias = gamificacionLogica.obtenerTodasInsigniasObtenidas(estudiante.getIdEstudiante());
                     String rangoTexto = gamificacionLogica.rangoTexto(estudiante.getRango());
                     RankingLogica rankingLogica = new RankingLogica();
                     int posicion = rankingLogica.obtenerPosicion(estudiante.getIdEstudiante());
 
                     request.getSession().setAttribute("estrellasFinales", estrellas);
                     request.getSession().setAttribute("rangoFinal", rangoTexto);
-                    request.getSession().setAttribute("insigniasNuevas", insignias);
+                    request.getSession().setAttribute("insigniasTotales", insignias);  // ← cambio de nombre
                     request.getSession().setAttribute("posicionRanking", posicion);
-
-                    System.out.println("[TOTAL] Enviar Respuesta (escenario 6 completado → logros): " + (System.currentTimeMillis() - inicioTotal) + " ms");
-                    System.out.println("===========================================================\n");
 
                     response.sendRedirect(request.getContextPath() + "/logrosFinales.jsp");
                 } else {

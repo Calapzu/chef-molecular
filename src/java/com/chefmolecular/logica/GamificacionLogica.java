@@ -153,4 +153,26 @@ public class GamificacionLogica {
                 1;
         };
     }
+
+    public List<Insignia> obtenerTodasInsigniasObtenidas(int idEstudiante) throws SQLException {
+        long inicioTotal = System.currentTimeMillis();
+        System.out.println("\n--- [GamificacionLogica] obtenerTodasInsigniasObtenidas ---");
+
+        long t1 = System.currentTimeMillis();
+        List<Insignia> todas = insigniaDAO.listarTodasConEstado(idEstudiante);
+        System.out.println("[DAO→BD] listarTodasConEstado: " + (System.currentTimeMillis() - t1) + " ms");
+
+        // Filtrar solo las que el estudiante ya obtuvo
+        List<Insignia> obtenidas = new java.util.ArrayList<>();
+        for (Insignia i : todas) {
+            if (i.isObtenida()) {
+                obtenidas.add(i);
+            }
+        }
+
+        System.out.println("[TOTAL] obtenerTodasInsigniasObtenidas: " + (System.currentTimeMillis() - inicioTotal) + " ms");
+        System.out.println("-----------------------------------------------------------\n");
+
+        return obtenidas;
+    }
 }

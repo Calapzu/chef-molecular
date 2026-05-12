@@ -47,7 +47,7 @@
                 position: relative;
                 overflow-x: hidden;
                 background-image: radial-gradient(circle at 20% 30%, rgba(255,220,150,0.3) 3%, transparent 3.5%),
-                                  radial-gradient(circle at 80% 70%, rgba(255,180,120,0.2) 2%, transparent 2.5%);
+                    radial-gradient(circle at 80% 70%, rgba(255,180,120,0.2) 2%, transparent 2.5%);
                 background-size: 50px 50px, 40px 40px;
             }
 
@@ -66,7 +66,7 @@
                     rgba(244,194,140,0.7) 50%,
                     rgba(217,122,43,0.4) 80%,
                     transparent
-                );
+                    );
                 pointer-events: none;
                 z-index: 1;
             }
@@ -143,6 +143,18 @@
                 align-items: center;
                 gap: 10px;
             }
+            /* SCROLL NAV */
+            .scroll-nav {
+                display: flex; justify-content: center; gap: 16px;
+                padding: 10px 16px; background: var(--panel-color);
+                border-bottom: 1px solid var(--borde-color);
+                position: sticky; top: 64px; z-index: 90;
+                backdrop-filter: blur(8px); flex-wrap: wrap;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+            .scroll-link { font-size: 13px; font-weight: 500; color: var(--texto2-color); text-decoration: none; padding: 6px 14px; border-radius: 20px; transition: all var(--transicion); }
+            .scroll-link:hover, .scroll-link.activo { color: var(--acento2-color); background: var(--escarcha-color); }
+
             .chip-completado {
                 display: flex;
                 align-items: center;
@@ -585,14 +597,14 @@
             </div>
             <div class="navbar-der">
                 <span class="nav-temp">🍰 22 °C</span>
-                <% if (completado) { %>
+                <% if (completado) {%>
                 <div class="chip-completado">
                     Técnica dominada ✅
                 </div>
                 <div class="estrellas-nav">
-                    <div class="est <%= estrellas >= 1 ? "on" : "off" %>"></div>
-                    <div class="est <%= estrellas >= 2 ? "on" : "off" %>"></div>
-                    <div class="est <%= estrellas >= 3 ? "on" : "off" %>"></div>
+                    <div class="est <%= estrellas >= 1 ? "on" : "off"%>"></div>
+                    <div class="est <%= estrellas >= 2 ? "on" : "off"%>"></div>
+                    <div class="est <%= estrellas >= 3 ? "on" : "off"%>"></div>
                 </div>
                 <% } %>
             </div>
@@ -623,10 +635,18 @@
                 </div>
             </div>
         </div>
+            
+            <!-- NAVEGACIÓN STICKY (MEJORA UX) -->
+        <div class="scroll-nav">
+            <a href="#seccion-anim" class="scroll-link" data-target="seccion-anim">🥚 Puentes</a>
+            <a href="#seccion-exp" class="scroll-link" data-target="seccion-exp">🧪 Experimenta</a>
+            <a href="#seccion-act" class="scroll-link" data-target="seccion-act">🎮 Actividad</a>
+        </div>
+
 
         <div class="contenido">
             <!-- SECCIÓN 1: ANIMACIÓN DE MERENGUE (original escenario3) -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-anim">
                 <div class="sec-num">1</div>
                 <span class="sec-titulo">🥄 Batiendo claras — Puentes de H en acción</span>
                 <div class="sec-linea"></div>
@@ -649,7 +669,7 @@
             </div>
 
             <!-- SECCIÓN 2: LABORATORIO DE PUENTES DE H (original escenario3) -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-exp">
                 <div class="sec-num">2</div>
                 <span class="sec-titulo">⚗️ ¿Qué ingredientes forman puentes de hidrógeno?</span>
                 <div class="sec-linea"></div>
@@ -686,12 +706,12 @@
             </div>
 
             <!-- SECCIÓN 3: ACTIVIDAD INTERACTIVA -->
-            <div class="sec-head">
+            <div class="sec-head" id="seccion-act">
                 <div class="sec-num">3</div>
                 <span class="sec-titulo">📝 Pon a prueba tu merengue molecular</span>
                 <div class="sec-linea"></div>
             </div>
-            <div class="sec-bloque">
+            <div class="sec-bloque" >
                 <div class="quiz-wrap">
                     <div>
                         <div class="quiz-titulo" style="font-family:'Playfair Display',serif; font-size:1.1rem;">🧪 Clasifica las moléculas polares y no polares</div>
@@ -727,16 +747,18 @@
                 heroCanvas.width = heroWidth;
                 heroCanvas.height = heroHeight;
                 heroParticles = Array.from({length: Math.min(60, Math.floor(heroWidth / 20))}, () => ({
-                    x: Math.random(), y: Math.random(), s: 1 + Math.random() * 3, v: 0.0001 + Math.random() * 0.00015, a: Math.random() * Math.PI * 2
-                }));
+                        x: Math.random(), y: Math.random(), s: 1 + Math.random() * 3, v: 0.0001 + Math.random() * 0.00015, a: Math.random() * Math.PI * 2
+                    }));
             }
             function loopHero() {
-                if (!heroCtx || heroWidth === 0) return;
+                if (!heroCtx || heroWidth === 0)
+                    return;
                 heroCtx.clearRect(0, 0, heroWidth, heroHeight);
                 heroParticles.forEach(p => {
                     p.y -= p.v;
                     p.x += Math.sin(p.a + Date.now() * 0.0005) * 0.0002;
-                    if (p.y < -0.05) p.y = 1.05;
+                    if (p.y < -0.05)
+                        p.y = 1.05;
                     heroCtx.beginPath();
                     heroCtx.arc(p.x * heroWidth, p.y * heroHeight, p.s, 0, Math.PI * 2);
                     heroCtx.fillStyle = 'rgba(217,122,43,0.3)';
@@ -825,19 +847,30 @@
                 aguas.forEach(a => {
                     a.x += a.vx;
                     a.y += a.vy;
-                    if (a.x < 20 || a.x > anchoMerengue - 20) a.vx *= -1;
-                    if (a.y < 20 || a.y > altoMerengue - 20) a.vy *= -1;
+                    if (a.x < 20 || a.x > anchoMerengue - 20)
+                        a.vx *= -1;
+                    if (a.y < 20 || a.y > altoMerengue - 20)
+                        a.vy *= -1;
                 });
             }
 
             function loopMerengue() {
-                if (!runMerengue) return;
+                if (!runMerengue)
+                    return;
                 moverMerengue();
                 dibujarMerengue();
                 animMerengueId = requestAnimationFrame(loopMerengue);
             }
-            function pausarMerengue() { runMerengue = false; cancelAnimationFrame(animMerengueId); }
-            function reanudarMerengue() { if (!runMerengue) { runMerengue = true; loopMerengue(); } }
+            function pausarMerengue() {
+                runMerengue = false;
+                cancelAnimationFrame(animMerengueId);
+            }
+            function reanudarMerengue() {
+                if (!runMerengue) {
+                    runMerengue = true;
+                    loopMerengue();
+                }
+            }
             function reiniciarMerengue() {
                 pausarMerengue();
                 aguas.forEach(a => {
@@ -878,7 +911,7 @@
 
             function evaluarPuente() {
                 const [m1, m2] = seleccionadas;
-                const aceptores = ['O','N','F'];
+                const aceptores = ['O', 'N', 'F'];
                 const m1Dona = m1.tieneH && aceptores.includes(m1.atomo);
                 const m2Dona = m2.tieneH && aceptores.includes(m2.atomo);
                 const m1Acepta = aceptores.includes(m1.atomo);
@@ -932,8 +965,10 @@
                 ctxLab.fillText(m2.nombre, 250, 96);
                 // Línea entre ellas
                 ctxLab.beginPath();
-                if (puedeH) ctxLab.setLineDash([6, 4]);
-                else ctxLab.setLineDash([]);
+                if (puedeH)
+                    ctxLab.setLineDash([6, 4]);
+                else
+                    ctxLab.setLineDash([]);
                 ctxLab.strokeStyle = puedeH ? '#D97A2B' : '#C0392B';
                 ctxLab.lineWidth = 2;
                 ctxLab.moveTo(122, 90);

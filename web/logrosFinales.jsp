@@ -3,7 +3,7 @@
 <%
     int estrellas = (int) session.getAttribute("estrellasFinales");
     String rango = (String) session.getAttribute("rangoFinal");
-    List<Insignia> insignias = (List<Insignia>) session.getAttribute("insigniasNuevas");
+    List<Insignia> insignias = (List<Insignia>) session.getAttribute("insigniasTotales");
     int posicion = (int) session.getAttribute("posicionRanking");
 %>
 <!DOCTYPE html>
