@@ -150,7 +150,7 @@ public class ActividadDAO {
             if (rs.next()) {
                 int idExistente = rs.getInt("id_resultado");
                 int puntajeExistente = rs.getInt("puntaje_obtenido");
-                if (resultado.getPuntajeObtenido() > puntajeExistente) {
+                if (resultado.getPuntajeObtenido() >= puntajeExistente) {
                     String updateSql = "UPDATE resultado_actividad SET correctos = ?, incorrectos = ?, puntaje_obtenido = ?, completado = ? WHERE id_resultado = ?";
                     try (PreparedStatement psUpdate = cn.prepareStatement(updateSql)) {
                         psUpdate.setInt(1, resultado.getCorrectos());
@@ -337,10 +337,10 @@ public class ActividadDAO {
 
     public int obtenerRespuestaCorrectaSimulacionEstados(int idActividad, int idPregunta) throws SQLException {
         long inicio = System.currentTimeMillis();
-        String sql = "SELECT respuesta_correcta FROM pregunta_simulacion_estados WHERE id_pregunta = ? AND id_actividad = ?";
+        // ✅ Consulta corregida: solo busca por id_pregunta (que es único)
+        String sql = "SELECT respuesta_correcta FROM pregunta_simulacion_estados WHERE id_pregunta = ?";
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idPregunta);
-            ps.setInt(2, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int resultado = rs.getInt("respuesta_correcta");
@@ -420,10 +420,9 @@ public class ActividadDAO {
 
     public int obtenerRespuestaCorrectaEbullicion(int idActividad, int idPregunta) throws SQLException {
         long inicio = System.currentTimeMillis();
-        String sql = "SELECT respuesta_correcta FROM pregunta_simulacion_ebullicion WHERE id_pregunta = ? AND id_actividad = ?";
+        String sql = "SELECT respuesta_correcta FROM pregunta_simulacion_ebullicion WHERE id_pregunta = ?";
         try (Connection cn = ConexionDB.obtener(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, idPregunta);
-            ps.setInt(2, idActividad);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int resultado = rs.getInt("respuesta_correcta");

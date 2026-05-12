@@ -293,6 +293,9 @@
                 <% }%>
             </div>
 
+            <!-- DEBUG-TIPO: <%= actividad != null ? actividad.getTipo() : "NULL"%> -->
+            <!-- DEBUG-ESC: <%= idEscenario%> -->
+
             <%-- INCLUIR EL JSP SEGÚN TIPO Y ESCENARIO --%>
             <% if ("DRAG_AND_DROP".equals(actividad.getTipo())) {
                     if (idEscenario == 1 || idEscenario == 2) { %>
@@ -300,7 +303,7 @@
             <% } else if (idEscenario == 3) { %>
             <jsp:include page="/actividades/esc3.jsp"/>
             <% } else if (idEscenario == 4) { %>
-            <jsp:include page="/actividades/esc4.jsp"/>
+            <jsp:include page="/actividades/esc41.jsp"/>
             <% } else if (idEscenario == 5) { %>
             <jsp:include page="/actividades/esc5.jsp"/>
             <% } else if (idEscenario == 6) { %>

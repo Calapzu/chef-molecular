@@ -76,6 +76,8 @@ public class ActividadServlet extends HttpServlet {
             }
 
             ActividadInteractiva actividadActual = actividades.get(actividadIdx);
+            System.out.println("Actividad cargada: id=" + actividadActual.getIdActividad()
+                    + ", tipo=" + actividadActual.getTipo());
 
             // Lógica → DAO → BD: verificar si ya completó
             long t4 = System.currentTimeMillis();
