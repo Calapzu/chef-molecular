@@ -1,8 +1,9 @@
+-- ============================================================
+-- PROCEDURES
+-- ============================================================
+
 USE chef_molecular;
 
--- ------------------------------------------------------------
--- PROCEDIMIENTO ÍNDICES SEGUROS
--- ------------------------------------------------------------
 DROP PROCEDURE IF EXISTS create_index_safe;
 DELIMITER $$
 CREATE PROCEDURE create_index_safe(
@@ -23,5 +24,5 @@ BEGIN
         EXECUTE stmt;
         DEALLOCATE PREPARE stmt;
     END IF;
-END $$
+END$$
 DELIMITER ;

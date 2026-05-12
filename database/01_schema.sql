@@ -1,6 +1,5 @@
 -- ============================================================
--- CHEF MOLECULAR - BASE DE DATOS DEFINITIVA
--- Esquema y tablas
+-- SCHEMA: TABLAS Y ESTRUCTURA
 -- ============================================================
 
 DROP DATABASE IF EXISTS chef_molecular;
@@ -95,16 +94,6 @@ CREATE TABLE elemento_arrastrable (
         REFERENCES actividad_interactiva(id_actividad) ON DELETE CASCADE,
     CONSTRAINT fk_elemento_categoria FOREIGN KEY (id_categoria)
         REFERENCES categoria_actividad(id_categoria) ON DELETE CASCADE
-);
-
-CREATE TABLE pieza_molecular (
-    id_pieza      INT AUTO_INCREMENT PRIMARY KEY,
-    id_actividad  INT NOT NULL,
-    nombre        VARCHAR(100) NOT NULL,
-    formula       VARCHAR(50),
-    color         VARCHAR(20),
-    CONSTRAINT fk_pieza_actividad FOREIGN KEY (id_actividad)
-        REFERENCES actividad_interactiva(id_actividad) ON DELETE CASCADE
 );
 
 CREATE TABLE resultado_actividad (
@@ -251,78 +240,11 @@ CREATE TABLE receta_estudiante (
     CONSTRAINT uq_receta_estudiante UNIQUE (id_estudiante, id_receta)
 );
 
--- ============================================================
--- NUEVAS TABLAS PARA LAS ACTIVIDADES VARIADAS
--- ============================================================
-
-CREATE TABLE molecula_puente_h (
-    id_molecula  INT AUTO_INCREMENT PRIMARY KEY,
-    id_actividad INT NOT NULL,
-    nombre       VARCHAR(100) NOT NULL,
-    atomo        VARCHAR(10) NOT NULL COMMENT 'Átomo electronegativo (O, N, F, Cl, C...)',
-    tiene_h      TINYINT(1) NOT NULL DEFAULT 0,
-    puede_formar TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Si cumple condiciones para puente H',
-    CONSTRAINT fk_molecula_actividad FOREIGN KEY (id_actividad)
-        REFERENCES actividad_interactiva(id_actividad) ON DELETE CASCADE
-);
-
-CREATE TABLE par_puente_h (
-    id_par       INT AUTO_INCREMENT PRIMARY KEY,
-    id_actividad INT NOT NULL,
-    id_molecula1 INT NOT NULL,
-    id_molecula2 INT NOT NULL,
-    CONSTRAINT fk_par_actividad_puente FOREIGN KEY (id_actividad)
-        REFERENCES actividad_interactiva(id_actividad) ON DELETE CASCADE,
-    CONSTRAINT fk_par_mol1 FOREIGN KEY (id_molecula1)
-        REFERENCES molecula_puente_h(id_molecula) ON DELETE CASCADE,
-    CONSTRAINT fk_par_mol2 FOREIGN KEY (id_molecula2)
-        REFERENCES molecula_puente_h(id_molecula) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS par_dipolo (
-    id_par INT AUTO_INCREMENT PRIMARY KEY,
-    id_actividad INT NOT NULL,
+CREATE TABLE par_dipolo (
+    id_par           INT AUTO_INCREMENT PRIMARY KEY,
+    id_actividad     INT NOT NULL,
     extremo_positivo VARCHAR(100) NOT NULL,
     extremo_negativo VARCHAR(100) NOT NULL,
     CONSTRAINT fk_par_dipolo_actividad FOREIGN KEY (id_actividad)
-        REFERENCES actividad_interactiva(id_actividad) ON DELETE CASCADE
-);
-
-CREATE TABLE pregunta_simulacion_estados (
-    id_pregunta        INT AUTO_INCREMENT PRIMARY KEY,
-    id_actividad       INT NOT NULL,
-    enunciado          TEXT NOT NULL,
-    opcion_a           VARCHAR(255) NOT NULL,
-    opcion_b           VARCHAR(255) NOT NULL,
-    opcion_c           VARCHAR(255) NOT NULL,
-    opcion_d           VARCHAR(255) NOT NULL,
-    respuesta_correcta TINYINT NOT NULL COMMENT '1=A 2=B 3=C 4=D',
-    explicacion        TEXT,
-    CONSTRAINT fk_pregunta_estados_actividad FOREIGN KEY (id_actividad)
-        REFERENCES actividad_interactiva(id_actividad) ON DELETE CASCADE
-);
-
-CREATE TABLE fenomeno_propiedad (
-    id_fenomeno        INT AUTO_INCREMENT PRIMARY KEY,
-    id_actividad       INT NOT NULL,
-    descripcion        TEXT NOT NULL,
-    propiedad_correcta ENUM('TENSION_SUPERFICIAL','VISCOSIDAD','CAPILARIDAD') NOT NULL,
-    CONSTRAINT fk_fenomeno_actividad FOREIGN KEY (id_actividad)
-        REFERENCES actividad_interactiva(id_actividad) ON DELETE CASCADE
-);
-
-CREATE TABLE pregunta_simulacion_ebullicion (
-    id_pregunta        INT AUTO_INCREMENT PRIMARY KEY,
-    id_actividad       INT NOT NULL,
-    parametro_altitud  INT DEFAULT 0 COMMENT 'Altitud en metros',
-    parametro_presion  DECIMAL(6,2) DEFAULT 1.00 COMMENT 'Presión en atm',
-    enunciado          TEXT NOT NULL,
-    opcion_a           VARCHAR(255) NOT NULL,
-    opcion_b           VARCHAR(255) NOT NULL,
-    opcion_c           VARCHAR(255) NOT NULL,
-    opcion_d           VARCHAR(255) NOT NULL,
-    respuesta_correcta TINYINT NOT NULL,
-    explicacion        TEXT,
-    CONSTRAINT fk_pregunta_ebullicion_actividad FOREIGN KEY (id_actividad)
         REFERENCES actividad_interactiva(id_actividad) ON DELETE CASCADE
 );

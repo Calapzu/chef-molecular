@@ -1,8 +1,9 @@
+-- ============================================================
+-- ÍNDICES (usa el procedimiento create_index_safe)
+-- ============================================================
+
 USE chef_molecular;
 
--- ------------------------------------------------------------
--- ÍNDICES INICIALES (depende del procedimiento create_index_safe)
--- ------------------------------------------------------------
 CALL create_index_safe('sesion', 'idx_sesion_token', '(token)');
 CALL create_index_safe('sesion', 'idx_sesion_estudiante', '(id_estudiante, activa)');
 CALL create_index_safe('progreso_escenario', 'idx_progreso_estudiante', '(id_estudiante)');

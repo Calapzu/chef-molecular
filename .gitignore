@@ -47,3 +47,4 @@ desktop.ini
 # Ignorar archivo real de configuración de BD
 conf/database-config.properties
 **/database-config.properties
+*.txt
